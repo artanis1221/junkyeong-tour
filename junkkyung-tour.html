@@ -655,7 +655,7 @@ function renderChecklist(data){
   document.getElementById("checklist-progress-label").textContent=`준비 완료 ${done}/${items.length} (${pct}%)`;
   document.getElementById("checklist-progress-bar").style.width=pct+"%";
   const cats=[...new Set(items.map(([,c])=>c.cat))];
-  document.getElementById("checklist-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">준비물이 없어요.</div>":
+  document.getElementById("checklist-list").innerHTML=!items.length?'<div class="card" style="color:var(--muted);text-align:center;padding:16px">준비물이 없어요.</div>':
     cats.map(cat=>{
       const ci=items.filter(([,c])=>c.cat===cat);
       return `<div style="margin-bottom:12px"><div class="section-label">${cat} (${ci.filter(([,c])=>c.done).length}/${ci.length})</div>
