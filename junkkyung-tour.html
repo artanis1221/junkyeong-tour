@@ -675,7 +675,7 @@ window.deleteCheck=function(key){remove(ref(db,"checklist/"+key));toast("삭제�
 onValue(ref(db,"places"),(snap)=>{renderPlaces(snap.val()||{});});
 function renderPlaces(data){
   const items=Object.entries(data),types=["숙소","맛집","관광","카페"];
-  document.getElementById("places-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">장소가 없어요.</div>":
+  document.getElementById("places-list").innerHTML=!items.length?'<div class="card" style="color:var(--muted);text-align:center;padding:16px">장소가 없어요.</div>':
     types.map(type=>{
       const ti=items.filter(([,p])=>p.type===type);if(!ti.length)return"";
       return `<div style="margin-bottom:16px"><div class="section-label">${typeIcon[type]} ${type}</div>
@@ -773,7 +773,7 @@ let finesData={};
 onValue(ref(db,"fines"),(snap)=>{finesData=snap.val()||{};renderFineList();});
 function renderFineList(){
   const items=Object.entries(finesData);
-  document.getElementById("fine-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">벌칙이 없어요 😇</div>":
+  document.getElementById("fine-list").innerHTML=!items.length?'<div class="card" style="color:var(--muted);text-align:center;padding:16px">벌칙이 없어요 😇</div>':
     "<div class="card" style="padding:6px 14px">"+items.map(([key,f])=>`<div class="fine-item">
       <div><div style="font-size:13px;font-weight:500">${f.victim} 🎯 ${f.title}</div>
         <div style="font-size:11px;color:var(--muted);margin-top:2px">이유: ${f.reason||"-"}</div></div>
@@ -797,7 +797,7 @@ function renderNotices(){
     <input type="text" id="notice-title" placeholder="제목" style="margin-bottom:8px"/>
     <textarea id="notice-body" placeholder="내용"></textarea>
     <button class="primary" onclick="addNotice()" style="margin-top:8px;width:100%">공지 올리기</button></div>`:"";
-  document.getElementById("notice-list").innerHTML=form+(!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">공지가 없어요.</div>":
+  document.getElementById("notice-list").innerHTML=form+(!items.length?'<div class="card" style="color:var(--muted);text-align:center;padding:16px">공지가 없어요.</div>':
     items.map(([key,n])=>`<div class="card" style="margin-bottom:10px">
       <div style="font-size:14px;font-weight:500;margin-bottom:6px">${n.title}</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.6">${n.body}</div>
@@ -814,7 +814,7 @@ let pledgesData={};
 onValue(ref(db,"pledges"),(snap)=>{pledgesData=snap.val()||{};renderPledges();});
 function renderPledges(){
   const items=Object.entries(pledgesData).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
-  document.getElementById("pledge-list").innerHTML=!items.length?"<div style="color:var(--muted);text-align:center;padding:16px;font-size:13px">아직 다짐이 없어요!</div>":
+  document.getElementById("pledge-list").innerHTML=!items.length?'<div style="color:var(--muted);text-align:center;padding:16px;font-size:13px">아직 다짐이 없어요!</div>':
     items.map(([key,p])=>`<div style="padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;border-left:3px solid var(--accent)">
       <div style="font-size:14px;margin-bottom:4px">"${p.text}"</div>
       <div style="font-size:11px;color:var(--muted)">— ${p.name} · ${tsToDate(p.ts)} ${isAdmin?`<button class="danger-btn" onclick="deletePledge('${key}')">🗑</button>`:""}</div>
@@ -831,7 +831,7 @@ let reviewsData={};
 onValue(ref(db,"reviews"),(snap)=>{reviewsData=snap.val()||{};renderReviews();});
 function renderReviews(){
   const items=Object.entries(reviewsData).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
-  document.getElementById("review-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">아직 후기가 없어요!</div>":
+  document.getElementById("review-list").innerHTML=!items.length?'<div class="card" style="color:var(--muted);text-align:center;padding:16px">아직 후기가 없어요!</div>':
     items.map(([key,r])=>`<div class="card" style="margin-bottom:10px">
       <div style="font-size:12px;font-weight:500;margin-bottom:4px">${r.name} · ${r.title||""}</div>
       <div style="font-size:13px;line-height:1.7">${r.text}</div>
@@ -849,7 +849,7 @@ let hellosData={};
 onValue(ref(db,"hellos"),(snap)=>{hellosData=snap.val()||{};renderHellos();});
 function renderHellos(){
   const items=Object.entries(hellosData).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
-  document.getElementById("hello-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">한마디를 남겨봐요!</div>":
+  document.getElementById("hello-list").innerHTML=!items.length?'<div class="card" style="color:var(--muted);text-align:center;padding:16px">한마디를 남겨봐요!</div>':
     "<div class="card" style="padding:6px 14px">"+items.map(([key,h])=>`<div class="settle-row">
       <div><span style="font-weight:500;margin-right:8px">${h.name}</span><span style="color:var(--muted)">${h.text}</span></div>
       ${isAdmin?`<button class="danger-btn" onclick="deleteHello('${key}')">🗑</button>`:""}</div>`).join("")+"</div>";
