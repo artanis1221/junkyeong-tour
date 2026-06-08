@@ -593,8 +593,8 @@ function renderExpense(){
     <div class="metric"><div class="metric-label">총 지출</div><div class="metric-value">${total.toLocaleString()}원</div></div>
     <div class="metric"><div class="metric-label">1인 부담</div><div class="metric-value">${per.toLocaleString()}원</div></div>
     <div class="metric"><div class="metric-label">항목 수</div><div class="metric-value">${items.length}건</div></div>`;
-  document.getElementById("expense-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">지출 내역이 없어요.</div>":
-    "<div class="card" style="padding:6px 16px">"+items.map(([key,e])=>`<div class="expense-item">
+  document.getElementById("expense-list").innerHTML=!items.length?'<div class="card" style="color:var(--muted);text-align:center;padding:16px">지출 내역이 없어요.</div>':
+    '<div class="card" style="padding:6px 16px">'+items.map(([key,e])=>`<div class="expense-item">
       <div><span style="font-size:14px;font-weight:500">${e.title}</span><span class="badge ${catBadge[e.cat]||"badge-gray"}" style="margin-left:8px">${e.cat}</span></div>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
         <div style="text-align:right"><div style="font-size:14px;font-weight:500">${(e.amount||0).toLocaleString()}원</div><div style="font-size:11px;color:var(--hint)">${e.payer}</div></div>
