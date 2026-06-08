@@ -4,478 +4,165 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>준경준경 투어 🗼</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f7f6f2;
-    --surface: #ffffff;
-    --border: #e8e4dc;
-    --text: #1a1814;
-    --muted: #8a8680;
-    --hint: #bbb8b2;
-    --accent: #c8472a;
-    --accent-light: #fdf0ed;
-    --green: #2a7a4f;
-    --green-light: #edf7f2;
-    --amber: #b87d1a;
-    --amber-light: #fdf6e8;
-    --blue: #2054a8;
-    --blue-light: #eef3fc;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  /* HEADER */
-  header {
-    background: var(--text);
-    color: #fff;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px;
-    letter-spacing: 0.02em;
-    color: #fff;
-  }
-  .logo span { color: var(--accent); }
-  .header-meta {
-    font-size: 12px;
-    color: rgba(255,255,255,0.5);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .sync-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #888;
-    display: inline-block;
-    margin-right: 5px;
-    transition: background 0.3s;
-  }
-  .sync-dot.live { background: #4caf7d; animation: pulse 2s infinite; }
-  .sync-dot.error { background: var(--accent); }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
-
-  /* NAV */
-  nav {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    padding: 0 24px;
-    gap: 0;
-    overflow-x: auto;
-  }
-  nav button {
-    padding: 14px 18px;
-    font-size: 13px;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-weight: 400;
-    color: var(--muted);
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all .2s;
-  }
-  nav button.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
-  nav button:hover:not(.active) { color: var(--text); }
-
-  /* LAYOUT */
-  main { max-width: 780px; margin: 0 auto; padding: 28px 20px 60px; }
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 22px;
-    margin-bottom: 14px;
-  }
-  .card-sm { padding: 14px 18px; }
-
-  /* BADGES */
-  .badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 20px;
-  }
-  .badge-red { background: var(--accent-light); color: var(--accent); }
-  .badge-green { background: var(--green-light); color: var(--green); }
-  .badge-amber { background: var(--amber-light); color: var(--amber); }
-  .badge-blue { background: var(--blue-light); color: var(--blue); }
-  .badge-gray { background: #f1efe8; color: #5c5a56; }
-
-  /* BUTTONS */
-  button {
-    font-family: 'Noto Sans KR', sans-serif;
-    cursor: pointer;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    padding: 7px 14px;
-    transition: all .15s;
-  }
-  button:hover { background: var(--bg); border-color: var(--hint); }
-  button.primary { background: var(--text); color: #fff; border-color: var(--text); }
-  button.primary:hover { background: #333; }
-  button.danger-btn { color: var(--accent); border-color: transparent; background: none; padding: 4px 6px; }
-  button.danger-btn:hover { background: var(--accent-light); }
-
-  /* INPUTS */
-  input, select, textarea {
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 8px 12px;
-    background: var(--surface);
-    color: var(--text);
-    width: 100%;
-    transition: border-color .2s;
-    outline: none;
-  }
-  input:focus, select:focus, textarea:focus { border-color: var(--text); }
-  textarea { resize: vertical; min-height: 60px; }
-  .input-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
-  .input-row input, .input-row select { flex: 1; }
-
-  /* SECTION TITLE */
-  .section-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  /* HERO */
-  .hero {
-    background: var(--text);
-    color: #fff;
-    border-radius: var(--radius);
-    padding: 36px 28px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .hero-left h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 36px;
-    line-height: 1.1;
-    margin-bottom: 8px;
-  }
-  .hero-left h1 span { color: var(--accent); }
-  .hero-left p { color: rgba(255,255,255,0.5); font-size: 13px; }
-  .dday-box { text-align: center; flex-shrink: 0; }
-  .dday-num {
-    font-family: 'DM Serif Display', serif;
-    font-size: 52px;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .dday-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; }
-
-  /* METRIC GRID */
-  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
-  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
-  .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .metric-value { font-size: 22px; font-weight: 500; }
-
-  /* MEMBER GRID */
-  .member-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-  .member-card { text-align: center; }
-  .avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 500;
-    margin: 0 auto 7px;
-  }
-  .member-name { font-size: 12px; color: var(--text); }
-  .member-role { font-size: 10px; color: var(--muted); margin-top: 1px; }
-
-  /* TIMELINE */
-  .day-block { margin-bottom: 28px; }
-  .day-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--muted);
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .tl-wrap { position: relative; padding-left: 28px; }
-  .tl-wrap::before {
-    content: '';
-    position: absolute;
-    left: 9px; top: 8px; bottom: 0;
-    width: 1px;
-    background: var(--border);
-  }
-  .tl-item { position: relative; margin-bottom: 18px; }
-  .tl-dot {
-    position: absolute;
-    left: -20px; top: 5px;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    background: var(--surface);
-  }
-  .tl-dot.adopted { border-color: var(--green); background: var(--green-light); }
-  .tl-dot.pending { border-color: var(--amber); background: var(--amber-light); }
-  .tl-time { font-size: 11px; color: var(--hint); margin-bottom: 3px; }
-  .tl-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
-  .tl-desc { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .tl-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-  /* ADMIN BAR */
-  .admin-bar {
-    background: #f7f6f2;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .admin-bar label { font-size: 12px; color: var(--muted); white-space: nowrap; }
-  .admin-bar input { width: 110px; flex: none; }
-  #admin-status { font-size: 12px; }
-
-  /* SUGGEST FORM */
-  .suggest-form {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    margin-bottom: 22px;
-  }
-  .suggest-form .form-title { font-size: 13px; font-weight: 500; margin-bottom: 14px; color: var(--muted); }
-  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-
-  /* EXPENSE */
-  .expense-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .expense-item:last-child { border: none; }
-  .settle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-  .settle-row:last-child { border: none; }
-
-  /* CHECKLIST */
-  .check-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-  }
-  .check-item:last-child { border: none; }
-  .check-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
-  .check-item.done .check-text { text-decoration: line-through; color: var(--hint); }
-
-  /* PLACES */
-  .place-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    gap: 12px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .place-item:last-child { border: none; }
-  .place-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
-  .place-note { font-size: 12px; color: var(--muted); }
-  .map-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    padding: 5px 10px;
-    border: 1px solid #b5d4f4;
-    color: var(--blue);
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition: background .15s;
-  }
-  .map-link:hover { background: var(--blue-light); }
-
-  /* LOADING */
-  .loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    color: var(--muted);
-    gap: 12px;
-  }
-  .spinner {
-    width: 28px; height: 28px;
-    border: 2px solid var(--border);
-    border-top-color: var(--text);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--text);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    opacity: 0;
-    transition: all .3s;
-    pointer-events: none;
-    z-index: 9999;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* PENDING SECTION */
-  .pending-card {
-    border-left: 3px solid var(--amber);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    padding: 12px 14px;
-    background: var(--amber-light);
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    gap: 12px;
-  }
-
-  @media (max-width: 600px) {
-    .hero { padding: 24px 20px; }
-    .hero-left h1 { font-size: 28px; }
-    .dday-num { font-size: 40px; }
-    .member-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
-    .avatar { width: 40px; height: 40px; font-size: 11px; }
-    .member-name { font-size: 11px; }
-  }
+:root{--bg:#f7f6f2;--surface:#fff;--border:#e8e4dc;--text:#1a1814;--muted:#8a8680;--hint:#bbb8b2;--accent:#c8472a;--accent-light:#fdf0ed;--green:#2a7a4f;--green-light:#edf7f2;--amber:#b87d1a;--amber-light:#fdf6e8;--blue:#2054a8;--blue-light:#eef3fc;--radius:12px;--radius-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+header{background:var(--text);color:#fff;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.logo{font-family:"DM Serif Display",serif;font-size:18px;color:#fff}.logo span{color:var(--accent)}
+.header-meta{font-size:12px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:12px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#888;display:inline-block;margin-right:5px;transition:background .3s}
+.sync-dot.live{background:#4caf7d;animation:pulse 2s infinite}.sync-dot.error{background:var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 8px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{padding:12px 14px;font-size:12px;font-family:"Noto Sans KR",sans-serif;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s}
+nav button.active{color:var(--text);border-bottom-color:var(--text);font-weight:500}
+main{max-width:780px;margin:0 auto;padding:24px 16px 80px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge-blue{background:#E6F1FB;color:#0C447C}.badge-green{background:#EAF3DE;color:#27500A}
+.badge-amber{background:#FAEEDA;color:#633806}.badge-gray{background:#F1EFE8;color:#444441}
+button{font-family:"Noto Sans KR",sans-serif;cursor:pointer;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;padding:7px 14px;transition:all .15s}
+button:hover{background:var(--bg)}
+button.primary{background:var(--text);color:#fff;border-color:var(--text)}button.primary:hover{background:#333}
+button.danger-btn{color:var(--accent);border-color:transparent;background:none;padding:4px 6px}
+input,select,textarea{font-family:"Noto Sans KR",sans-serif;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;background:var(--surface);color:var(--text);width:100%;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--text)}
+textarea{resize:vertical;min-height:60px}
+.input-row{display:flex;gap:8px;margin-bottom:10px;align-items:center}.input-row input,.input-row select{flex:1}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.hero{background:var(--text);color:#fff;border-radius:var(--radius);padding:0;margin-bottom:16px;position:relative;overflow:hidden;min-height:200px;display:flex;align-items:flex-end}
+.hero-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;opacity:.45}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,24,20,.95) 0%,rgba(26,24,20,.4) 60%,transparent 100%)}
+.hero-content{position:relative;z-index:2;padding:24px 20px 20px;width:100%;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+.hero-left h1{font-family:"DM Serif Display",serif;font-size:28px;line-height:1.1;margin-bottom:4px}
+.hero-left h1 span{color:var(--accent)}.hero-left p{font-size:12px;color:rgba(255,255,255,.5)}
+.dday-box{text-align:right}.dday-num{font-family:"DM Serif Display",serif;font-size:40px;color:var(--accent);line-height:1}
+.dday-label{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:4px}.metric-value{font-size:20px;font-weight:500}
+.member-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
+.member-card{text-align:center}.avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;margin:0 auto 6px}
+.member-name{font-size:12px}.member-role{font-size:10px;color:var(--muted)}
+.day-block{margin-bottom:24px}.day-title{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.tl-wrap{position:relative;padding-left:24px}.tl-wrap::before{content:"";position:absolute;left:7px;top:8px;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:16px}.tl-dot{position:absolute;left:-17px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--border);background:var(--surface)}
+.tl-dot.adopted{border-color:var(--green);background:var(--green-light)}.tl-dot.pending{border-color:var(--amber);background:var(--amber-light)}
+.tl-time{font-size:11px;color:var(--hint);margin-bottom:2px}.tl-title{font-size:14px;font-weight:500;margin-bottom:3px}
+.tl-desc{font-size:12px;color:var(--muted);margin-bottom:5px}.tl-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.admin-bar{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.admin-bar label{font-size:12px;color:var(--muted);white-space:nowrap}.admin-bar input{width:100px;flex:none}
+.suggest-form{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px}
+.form-title{font-size:13px;font-weight:500;margin-bottom:12px;color:var(--muted)}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.expense-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.expense-item:last-child{border:none}
+.settle-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.settle-row:last-child{border:none}
+.check-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.check-item:last-child{border:none}.check-item.done .check-text{text-decoration:line-through;color:var(--hint)}
+.place-item{display:flex;justify-content:space-between;align-items:start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.place-item:last-child{border:none}.place-name{font-size:14px;font-weight:500;margin-bottom:3px}.place-note{font-size:12px;color:var(--muted)}
+.map-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 10px;border:1px solid #b5d4f4;color:var(--blue);border-radius:var(--radius-sm);text-decoration:none;white-space:nowrap}
+.map-link:hover{background:var(--blue-light)}
+.pending-card{border-left:3px solid var(--amber);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 14px;background:var(--amber-light);margin-bottom:10px;display:flex;justify-content:space-between;align-items:start;gap:12px}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;color:var(--muted);gap:12px}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.jp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.jp-card:hover{border-color:var(--accent);background:var(--accent-light)}
+.jp-kor{font-size:14px;font-weight:500;margin-bottom:4px}.jp-jp{font-size:16px;color:var(--accent);margin-bottom:4px}.jp-read{font-size:12px;color:var(--muted)}
+.jp-cat{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;background:var(--bg);border:1px solid var(--border);margin-bottom:8px}
+.roulette-btn{width:100%;padding:16px;font-size:16px;font-weight:700;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);margin:12px 0}
+.roulette-result{text-align:center;font-size:26px;font-weight:700;padding:20px;background:var(--accent-light);border-radius:var(--radius);border:2px dashed var(--accent);margin-top:12px;min-height:80px;display:flex;align-items:center;justify-content:center}
+.role-card{text-align:center;padding:20px;background:var(--accent-light);border:2px dashed var(--accent);border-radius:var(--radius);margin-top:12px}
+.fine-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.fine-item:last-child{border:none}
+.weather-card{background:linear-gradient(135deg,#1a3a5c,#2a5a8c);color:#fff;border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.weather-temp{font-size:36px;font-weight:300}
+.progress-wrap{background:var(--border);border-radius:20px;height:8px;margin-top:8px;overflow:hidden}
+.progress-bar{height:8px;border-radius:20px;background:var(--green);transition:width .5s}
+.sub-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.sub-tab{padding:6px 14px;font-size:12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s}
+.sub-tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.plan-btn{font-size:12px;padding:8px;text-align:left;line-height:1.5;flex:1}
+.ex-result{font-size:26px;font-weight:700;color:var(--accent);text-align:center;padding:14px;background:var(--accent-light);border-radius:var(--radius-sm);margin-top:10px}
+.pledge-item{padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;border-left:3px solid var(--accent)}
+.reaction-btn{padding:3px 8px;font-size:12px;border-radius:20px;background:var(--bg);border:1px solid var(--border);cursor:pointer;transition:all .15s;margin:2px}
+.reaction-btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.bus-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.bus-row:last-child{border:none}.bus-time{font-weight:600;min-width:50px}
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo">JUNKYEONG<span>TOUR</span></div>
   <div class="header-meta">
     <span><span class="sync-dot" id="sync-dot"></span><span id="sync-label">연결 중...</span></span>
-    <span>도쿄 7/15–21</span>
+    <span>🗼 도쿄 7/15-21</span>
   </div>
 </header>
-
-<nav>
+<nav id="main-nav">
   <button class="active" onclick="showPage('home')">🏠 홈</button>
   <button onclick="showPage('schedule')">📅 일정</button>
   <button onclick="showPage('expense')">💴 경비</button>
   <button onclick="showPage('checklist')">✅ 준비물</button>
   <button onclick="showPage('places')">📍 숙소·맛집</button>
+  <button onclick="showPage('transport')">🚌 교통</button>
+  <button onclick="showPage('japanese')">🎌 일본어</button>
+  <button onclick="showPage('fun')">🎲 놀거리</button>
+  <button onclick="showPage('community')">💬 소통</button>
 </nav>
-
 <main>
 
 <!-- HOME -->
 <div id="page-home" class="page active">
   <div class="hero">
-    <div class="hero-left">
-      <h1>준경준경<br><span>투어</span></h1>
-      <p>5인 5색 도쿄 어드벤처 · 7월 15일 – 21일</p>
-    </div>
-    <div class="dday-box">
-      <div class="dday-num" id="dday-num">–</div>
-      <div class="dday-label" id="dday-label">출발까지</div>
+    <img src="https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=1200&q=80" class="hero-bg-img" alt="후지산">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-left">
+        <h1>준경준경<br><span>투어</span></h1>
+        <p>5인 5색 도쿄 어드벤처 · 7월 15일 – 21일</p>
+      </div>
+      <div class="dday-box">
+        <div class="dday-num" id="dday-num">–</div>
+        <div class="dday-label" id="dday-label">출발까지</div>
+      </div>
     </div>
   </div>
-
   <div class="metric-grid">
     <div class="metric"><div class="metric-label">여행 기간</div><div class="metric-value">7일</div></div>
     <div class="metric"><div class="metric-label">멤버</div><div class="metric-value">5명</div></div>
     <div class="metric"><div class="metric-label">목적지</div><div class="metric-value">도쿄</div></div>
     <div class="metric"><div class="metric-label">채택 일정</div><div class="metric-value" id="adopted-count">–</div></div>
   </div>
-
   <div class="card">
     <div class="section-label">멤버</div>
     <div class="member-grid">
-      <div class="member-card">
-        <div class="avatar" style="background:#eeedfe;color:#3c3489">준경</div>
-        <div class="member-name">박준경</div>
-        <div class="member-role">관리자</div>
-      </div>
-      <div class="member-card">
-        <div class="avatar" style="background:#e6f1fb;color:#0c447c">재욱</div>
-        <div class="member-name">권재욱</div>
-        <div class="member-role">멤버</div>
-      </div>
-      <div class="member-card">
-        <div class="avatar" style="background:#e1f5ee;color:#085041">내원</div>
-        <div class="member-name">이내원</div>
-        <div class="member-role">멤버</div>
-      </div>
-      <div class="member-card">
-        <div class="avatar" style="background:#faeeda;color:#633806">우경</div>
-        <div class="member-name">김우경</div>
-        <div class="member-role">멤버</div>
-      </div>
-      <div class="member-card">
-        <div class="avatar" style="background:#fbeaf0;color:#72243e">세인</div>
-        <div class="member-name">정세인</div>
-        <div class="member-role">멤버</div>
+      <div class="member-card"><div class="avatar" style="background:#eeedfe;color:#3c3489">준경</div><div class="member-name">박준경</div><div class="member-role">관리자</div></div>
+      <div class="member-card"><div class="avatar" style="background:#e6f1fb;color:#0c447c">재욱</div><div class="member-name">권재욱</div><div class="member-role">대장</div></div>
+      <div class="member-card"><div class="avatar" style="background:#e1f5ee;color:#085041">내원</div><div class="member-name">이내원</div><div class="member-role">멤버</div></div>
+      <div class="member-card"><div class="avatar" style="background:#faeeda;color:#633806">우경</div><div class="member-name">김우경</div><div class="member-role">멤버</div></div>
+      <div class="member-card"><div class="avatar" style="background:#fbeaf0;color:#72243e">세인</div><div class="member-name">정세인</div><div class="member-role">멤버</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">🌤 도쿄 날씨 (7월 평균)</div>
+    <div class="weather-card">
+      <div><div class="weather-temp">31°C</div><div style="font-size:12px;opacity:.8;margin-top:4px">☁️ 흐리고 습함 · 체감 36°C</div></div>
+      <div style="text-align:right;font-size:12px">
+        <div>💧 습도 80%</div><div style="opacity:.7;margin-top:4px">🌂 우산 필수</div>
+        <div style="opacity:.7;margin-top:4px">🗻 후지산 정상 5°C</div>
       </div>
     </div>
+    <div style="font-size:12px;color:var(--muted)">※ 후지산 정상은 한여름에도 방한복 필수!</div>
   </div>
 </div>
 
@@ -483,26 +170,32 @@
 <div id="page-schedule" class="page">
   <div class="admin-bar">
     <label>🔒 관리자</label>
-    <input type="password" id="admin-pw" placeholder="비밀번호" />
+    <input type="password" id="admin-pw" placeholder="비밀번호"/>
     <button onclick="checkAdmin()">확인</button>
-    <span id="admin-status"></span>
+    <span id="admin-status" style="font-size:12px"></span>
   </div>
-
+  <div class="card" style="margin-bottom:14px">
+    <div class="section-label">🗻 후지산 플랜 타임테이블</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">플랜 선택시 16~17일 일정이 자동 세팅돼요 (관리자 전용)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="plan-btn" onclick="loadTimetable('free')"><div style="font-weight:500">🅐 자유여행</div><div style="font-size:10px;color:var(--muted)">스바시리 2,450m</div></button>
+      <button class="plan-btn" onclick="loadTimetable('willer')"><div style="font-weight:500">🅑 WILLER 투어</div><div style="font-size:10px;color:var(--muted)">요시다 3,400m</div></button>
+      <button class="plan-btn" onclick="loadTimetable('fmg')"><div style="font-weight:500">🅒 FMG 투어</div><div style="font-size:10px;color:var(--muted)">요시다 3,400m</div></button>
+    </div>
+    <div id="timetable-status" style="font-size:12px;color:var(--green);margin-top:8px"></div>
+  </div>
   <div class="suggest-form">
     <div class="form-title">+ 일정 제안하기</div>
     <div class="form-grid-2">
       <select id="sug-day">
-        <option value="7/15">7월 15일 (화)</option>
-        <option value="7/16">7월 16일 (수)</option>
-        <option value="7/17">7월 17일 (목)</option>
-        <option value="7/18">7월 18일 (금)</option>
-        <option value="7/19">7월 19일 (토)</option>
-        <option value="7/20">7월 20일 (일)</option>
+        <option value="7/15">7월 15일 (화)</option><option value="7/16">7월 16일 (수)</option>
+        <option value="7/17">7월 17일 (목)</option><option value="7/18">7월 18일 (금)</option>
+        <option value="7/19">7월 19일 (토)</option><option value="7/20">7월 20일 (일)</option>
         <option value="7/21">7월 21일 (월)</option>
       </select>
-      <input type="text" id="sug-time" placeholder="시간 (예: 14:00)" />
+      <input type="text" id="sug-time" placeholder="시간 (예: 14:00)"/>
     </div>
-    <input type="text" id="sug-title" placeholder="장소 / 활동명" style="margin-bottom:8px" />
+    <input type="text" id="sug-title" placeholder="장소 / 활동명" style="margin-bottom:8px"/>
     <textarea id="sug-desc" placeholder="간단한 설명 (선택)" style="margin-bottom:8px"></textarea>
     <div class="form-grid-2">
       <select id="sug-name">
@@ -512,19 +205,28 @@
       <button class="primary" onclick="addSuggestion()">제안 등록</button>
     </div>
   </div>
-
-  <div id="schedule-list"><div class="loading"><div class="spinner"></div><span>일정 불러오는 중...</span></div></div>
+  <div id="schedule-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
 </div>
 
 <!-- EXPENSE -->
 <div id="page-expense" class="page">
   <div class="metric-grid" id="expense-summary"></div>
-
-  <div class="card" style="margin-bottom:18px">
+  <div class="card" style="margin-bottom:14px">
+    <div class="section-label">💱 환율 계산기</div>
+    <div class="input-row">
+      <input type="number" id="ex-amount" placeholder="금액 입력" oninput="calcExchange()"/>
+      <select id="ex-dir" onchange="calcExchange()" style="max-width:100px">
+        <option value="yen">엔 → 원</option><option value="won">원 → 엔</option>
+      </select>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:4px">기준 환율: 1엔 = 9.2원</div>
+    <div id="ex-result" class="ex-result" style="display:none"></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
     <div class="section-label">지출 추가</div>
     <div class="input-row">
-      <input type="text" id="exp-title" placeholder="항목명 (예: 라멘집)" />
-      <input type="number" id="exp-amount" placeholder="금액 (원)" style="max-width:130px" />
+      <input type="text" id="exp-title" placeholder="항목명"/>
+      <input type="number" id="exp-amount" placeholder="금액 (원)" style="max-width:120px"/>
     </div>
     <div class="input-row">
       <select id="exp-payer">
@@ -537,17 +239,20 @@
       <button class="primary" onclick="addExpense()" style="white-space:nowrap">추가</button>
     </div>
   </div>
-
   <div id="expense-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
   <div id="settle-section"></div>
 </div>
 
 <!-- CHECKLIST -->
 <div id="page-checklist" class="page">
-  <div class="card" style="margin-bottom:14px">
+  <div class="card" style="margin-bottom:10px">
+    <div id="checklist-progress-label" style="font-size:13px;margin-bottom:6px">준비물 로딩 중...</div>
+    <div class="progress-wrap"><div class="progress-bar" id="checklist-progress-bar" style="width:0%"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:12px">
     <div class="input-row">
-      <input type="text" id="check-input" placeholder="준비물 추가..." />
-      <select id="check-cat" style="max-width:110px">
+      <input type="text" id="check-input" placeholder="준비물 추가..."/>
+      <select id="check-cat" style="max-width:100px">
         <option>서류</option><option>의류</option><option>전자기기</option><option>세면도구</option><option>기타</option>
       </select>
       <button class="primary" onclick="addCheckItem()" style="white-space:nowrap">추가</button>
@@ -558,375 +263,607 @@
 
 <!-- PLACES -->
 <div id="page-places" class="page">
-  <div class="card" style="margin-bottom:18px">
+  <div class="card" style="margin-bottom:12px">
     <div class="section-label">장소 추가</div>
     <div class="input-row">
-      <select id="place-type" style="max-width:90px">
-        <option>숙소</option><option>맛집</option><option>관광</option><option>카페</option>
-      </select>
-      <input type="text" id="place-name" placeholder="장소명" />
-      <input type="text" id="place-area" placeholder="지역" style="max-width:90px" />
+      <select id="place-type" style="max-width:80px"><option>숙소</option><option>맛집</option><option>관광</option><option>카페</option></select>
+      <input type="text" id="place-name" placeholder="장소명"/>
+      <input type="text" id="place-area" placeholder="지역" style="max-width:80px"/>
     </div>
     <div class="input-row">
-      <input type="text" id="place-note" placeholder="메모 (선택)" />
+      <input type="text" id="place-note" placeholder="메모 (선택)"/>
       <button class="primary" onclick="addPlace()" style="white-space:nowrap">추가</button>
     </div>
   </div>
   <div id="places-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
 </div>
 
-</main>
+<!-- TRANSPORT -->
+<div id="page-transport" class="page">
+  <div class="sub-tabs">
+    <div class="sub-tab active" onclick="showSubTab('bus',0)">🚌 신주쿠→후지산</div>
+    <div class="sub-tab" onclick="showSubTab('subway',1)">🚇 도쿄 지하철</div>
+  </div>
+  <div id="transport-panel-0">
+    <div class="card">
+      <div class="section-label">신주쿠 → 후지산 5합목</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">바스타 신주쿠 출발 · 약 2시간 · 편도 2,700~3,800엔</div>
+      <div class="bus-row"><div class="bus-time">06:30</div><div><div>후지큐 버스</div><div style="font-size:11px;color:var(--muted)">5합목 08:40 도착</div></div></div>
+      <div class="bus-row"><div class="bus-time">07:30</div><div><div>후지큐 버스</div><div style="font-size:11px;color:var(--muted)">5합목 09:45 도착</div></div></div>
+      <div class="bus-row"><div class="bus-time">08:30</div><div><div>후지큐 버스</div><div style="font-size:11px;color:var(--muted)">5합목 10:40 도착</div></div></div>
+      <div class="bus-row"><div class="bus-time">09:00</div><div><div>WILLER 버스 (예약 필요)</div><div style="font-size:11px;color:var(--muted)">5합목 11:00 도착</div></div></div>
+      <div class="bus-row"><div class="bus-time">10:30</div><div><div>후지큐 버스</div><div style="font-size:11px;color:var(--muted)">5합목 12:40 도착</div></div></div>
+    </div>
+    <div class="card">
+      <div class="section-label">예약 사이트</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="https://www.fujikyubus.co.jp" target="_blank" class="map-link" style="width:fit-content">🚌 후지큐 버스 예약</a>
+        <a href="https://willer-travel.com/ko/tour/fuji/" target="_blank" class="map-link" style="width:fit-content">🚌 WILLER 투어 예약</a>
+        <a href="https://www.fujisan-climb.jp/ko/" target="_blank" class="map-link" style="width:fit-content">🗻 후지산 입산 예약</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">⚠️ 주의사항</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.9">
+        · 7~9월 주말은 좌석 빨리 마감됨<br>
+        · 후지산 5합목 입산료 4,000엔 별도<br>
+        · 야간 입산(14:00~03:00)은 산장 예약자만 가능<br>
+        · 5합목 주차장은 혼잡 — 버스 이용 강력 추천
+      </div>
+    </div>
+  </div>
+  <div id="transport-panel-1" style="display:none">
+    <div class="card">
+      <div class="section-label">도쿄 지하철 링크 모음</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="https://www.tokyometro.jp/lang_ko/index.html" target="_blank" class="map-link" style="width:fit-content">🚇 도쿄 메트로 공식 (한국어)</a>
+        <a href="https://www.toei.metro.tokyo.lg.jp/lang/kor/" target="_blank" class="map-link" style="width:fit-content">🚇 도에이 지하철 (한국어)</a>
+        <a href="https://www.google.com/maps" target="_blank" class="map-link" style="width:fit-content">🗺 구글맵 실시간 경로</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">🎫 IC카드</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8">공항 도착 후 <strong style="color:var(--text)">Suica / Pasmo</strong> 구매 추천. 지하철·버스·편의점 모두 사용 가능. 외국인용 Welcome Suica는 보증금 없이 구매 가능.</div>
+    </div>
+    <div class="card">
+      <div class="section-label">주요 노선</div>
+      <div style="font-size:13px;color:var(--muted);line-height:2">
+        🔵 긴자선 — 시부야~아사쿠사<br>
+        🟢 야마노테선 — 도쿄 순환 (신주쿠·시부야·우에노)<br>
+        🟠 주오선 — 신주쿠 동서<br>
+        🔴 마루노우치선 — 신주쿠~긴자~도쿄역
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- JAPANESE -->
+<div id="page-japanese" class="page">
+  <div class="sub-tabs" id="jp-tabs">
+    <div class="sub-tab active" onclick="showJpCat('전체',0)">전체</div>
+    <div class="sub-tab" onclick="showJpCat('긴급',1)">🚨 긴급</div>
+    <div class="sub-tab" onclick="showJpCat('식당',2)">🍜 식당</div>
+    <div class="sub-tab" onclick="showJpCat('쇼핑',3)">🛍 쇼핑</div>
+    <div class="sub-tab" onclick="showJpCat('교통',4)">🚇 교통</div>
+    <div class="sub-tab" onclick="showJpCat('후지산',5)">🗻 후지산</div>
+  </div>
+  <div id="jp-list"></div>
+  <div style="font-size:12px;color:var(--muted);padding:8px 4px">💡 카드를 누르면 발음이 크게 표시돼요</div>
+</div>
+
+<!-- FUN -->
+<div id="page-fun" class="page">
+  <div class="sub-tabs">
+    <div class="sub-tab active" onclick="showSubTab('roulette',0)">🎡 룰렛</div>
+    <div class="sub-tab" onclick="showSubTab('role',1)">🎭 역할 뽑기</div>
+    <div class="sub-tab" onclick="showSubTab('fine',2)">💸 벌칙 게시판</div>
+  </div>
+  <div id="fun-panel-0">
+    <div class="card">
+      <div class="section-label">오늘 저녁 뭐 먹을까? 🍜</div>
+      <div id="roulette-items" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+      <div class="input-row">
+        <input type="text" id="roulette-input" placeholder="메뉴 추가..."/>
+        <button onclick="addRouletteItem()" style="white-space:nowrap">추가</button>
+      </div>
+      <button class="roulette-btn" onclick="spinRoulette()">🎰 돌려!</button>
+      <div id="roulette-result" class="roulette-result" style="display:none"></div>
+    </div>
+  </div>
+  <div id="fun-panel-1" style="display:none">
+    <div class="card">
+      <div class="section-label">오늘의 역할 뽑기 🎭</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button onclick="drawRole('길잡이 🗺')">길잡이 뽑기</button>
+        <button onclick="drawRole('사진사 📸')">사진사 뽑기</button>
+        <button onclick="drawRole('계산담당 💰')">계산담당 뽑기</button>
+        <button onclick="drawRole('짐꾼 🎒')">짐꾼 뽑기</button>
+        <button onclick="drawRole('오늘의 막내 👶')">막내 뽑기</button>
+        <button onclick="drawRole('오늘의 빌런 😈')">빌런 뽑기</button>
+      </div>
+      <div id="role-result" class="role-card" style="display:none"></div>
+    </div>
+  </div>
+  <div id="fun-panel-2" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-label">벌칙 등록</div>
+      <div class="input-row">
+        <input type="text" id="fine-title" placeholder="벌칙 내용 (예: 라멘 쏘기)"/>
+      </div>
+      <div class="input-row">
+        <select id="fine-victim">
+          <option value="">대상</option>
+          <option>박준경</option><option>권재욱</option><option>이내원</option><option>김우경</option><option>정세인</option>
+        </select>
+        <input type="text" id="fine-reason" placeholder="이유"/>
+        <button class="primary" onclick="addFine()" style="white-space:nowrap">등록</button>
+      </div>
+    </div>
+    <div id="fine-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
+  </div>
+</div>
+
+<!-- COMMUNITY -->
+<div id="page-community" class="page">
+  <div class="sub-tabs">
+    <div class="sub-tab active" onclick="showSubTab('notice',0)">📢 공지</div>
+    <div class="sub-tab" onclick="showSubTab('pledge',1)">🔥 다짐</div>
+    <div class="sub-tab" onclick="showSubTab('review',2)">✍️ 후기</div>
+    <div class="sub-tab" onclick="showSubTab('hello',3)">👋 한마디</div>
+  </div>
+  <div id="community-panel-0">
+    <div id="notice-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
+  </div>
+  <div id="community-panel-1" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-label">🔥 나의 다짐</div>
+      <select id="pledge-name" style="margin-bottom:8px">
+        <option value="">이름 선택</option>
+        <option>박준경</option><option>권재욱</option><option>이내원</option><option>김우경</option><option>정세인</option>
+      </select>
+      <textarea id="pledge-text" placeholder="후지산을 꼭 오른다! 같은 다짐을 남겨봐요 🔥" style="margin-bottom:8px"></textarea>
+      <button class="primary" onclick="addPledge()" style="width:100%">다짐 등록</button>
+    </div>
+    <div id="pledge-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
+  </div>
+  <div id="community-panel-2" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-label">✍️ 후기 작성</div>
+      <div class="input-row">
+        <select id="review-name">
+          <option value="">이름 선택</option>
+          <option>박준경</option><option>권재욱</option><option>이내원</option><option>김우경</option><option>정세인</option>
+        </select>
+        <input type="text" id="review-title" placeholder="제목"/>
+      </div>
+      <textarea id="review-text" placeholder="여행 후기를 남겨봐요!" style="margin-bottom:8px"></textarea>
+      <button class="primary" onclick="addReview()" style="width:100%">후기 등록</button>
+    </div>
+    <div id="review-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
+  </div>
+  <div id="community-panel-3" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-label">👋 한마디</div>
+      <div class="input-row">
+        <select id="hello-name">
+          <option value="">이름 선택</option>
+          <option>박준경</option><option>권재욱</option><option>이내원</option><option>김우경</option><option>정세인</option>
+        </select>
+        <input type="text" id="hello-text" placeholder="기대평, 인사 등 자유롭게!"/>
+        <button class="primary" onclick="addHello()" style="white-space:nowrap">등록</button>
+      </div>
+    </div>
+    <div id="hello-list"><div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div></div>
+  </div>
+</div>
+
+</main>
 <div class="toast" id="toast"></div>
 
-<!-- Firebase -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBwDn827_L82baptEmB6E91pMfbTD0gG9E",
-    authDomain: "junkyeong-tour.firebaseapp.com",
-    databaseURL: "https://junkyeong-tour-default-rtdb.firebaseio.com",
-    projectId: "junkyeong-tour",
-    storageBucket: "junkyeong-tour.firebasestorage.app",
-    messagingSenderId: "145452062852",
-    appId: "1:145452062852:web:5abc73825c4e42e204cad1",
-    measurementId: "G-X1BGRQJF0Y"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  const ADMIN_PW = '1221';
-  let isAdmin = false;
-
-  const DAYS = ['7/15','7/16','7/17','7/18','7/19','7/20','7/21'];
-  const DAY_LABELS = {
-    '7/15':'7월 15일 (화)','7/16':'7월 16일 (수)','7/17':'7월 17일 (목)',
-    '7/18':'7월 18일 (금)','7/19':'7월 19일 (토)','7/20':'7월 20일 (일)','7/21':'7월 21일 (월)'
-  };
-  const MEMBERS = ['박준경','권재욱','이내원','김우경','정세인'];
-  const catBadge = {식사:'badge-amber',교통:'badge-blue',숙소:'badge-blue',관광:'badge-green',쇼핑:'badge-gray',기타:'badge-gray'};
-  const typeIcon = {숙소:'🏨',맛집:'🍜',관광:'📸',카페:'☕'};
-  const typeBadge = {숙소:'badge-blue',맛집:'badge-amber',관광:'badge-green',카페:'badge-gray'};
-
-  // Sync indicator
-  const syncDot = document.getElementById('sync-dot');
-  const syncLabel = document.getElementById('sync-label');
-
-  function setSynced() { syncDot.className='sync-dot live'; syncLabel.textContent='실시간 연결됨'; }
-  function setError() { syncDot.className='sync-dot error'; syncLabel.textContent='연결 오류'; }
-
-  function toast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  }
-
-  // D-Day
-  function updateDday() {
-    const now = new Date();
-    const dep = new Date('2026-07-15');
-    const diff = Math.ceil((dep - now) / (1000*60*60*24));
-    const d = document.getElementById('dday-num');
-    const l = document.getElementById('dday-label');
-    if (diff > 0) { d.textContent = 'D-' + diff; l.textContent = '출발까지'; }
-    else if (diff === 0) { d.textContent = 'D-Day'; l.textContent = '오늘 출발!'; }
-    else { d.textContent = 'D+' + Math.abs(diff); l.textContent = '여행 완료'; }
-  }
-  updateDday();
-
-  // Page switching
-  window.showPage = function(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    const idx = ['home','schedule','expense','checklist','places'].indexOf(id);
-    document.querySelectorAll('nav button')[idx].classList.add('active');
-  };
-
-  // Admin
-  window.checkAdmin = function() {
-    const pw = document.getElementById('admin-pw').value;
-    const st = document.getElementById('admin-status');
-    if (pw === ADMIN_PW) {
-      isAdmin = true;
-      st.textContent = '✓ 관리자 모드 활성화';
-      st.style.color = '#2a7a4f';
-      renderSchedule();
-    } else {
-      isAdmin = false;
-      st.textContent = '✗ 비밀번호 오류';
-      st.style.color = '#c8472a';
-    }
-  };
-
-  // ─── SUGGESTIONS ───
-  let suggestionsData = {};
-
-  onValue(ref(db, 'suggestions'), (snap) => {
-    suggestionsData = snap.val() || {};
-    setSynced();
-    renderSchedule();
-    const adopted = Object.values(suggestionsData).filter(s => s.adopted).length;
-    document.getElementById('adopted-count').textContent = adopted;
-  }, setError);
-
-  function renderSchedule() {
-    const list = document.getElementById('schedule-list');
-    let html = '';
-    DAYS.forEach(day => {
-      const items = Object.entries(suggestionsData)
-        .filter(([,s]) => s.day === day)
-        .sort((a,b) => (a[1].time||'').localeCompare(b[1].time||''));
-      if (!items.length) return;
-      html += `<div class="day-block">
-        <div class="day-title">${DAY_LABELS[day]}</div>
-        <div class="tl-wrap">`;
-      items.forEach(([key, s]) => {
-        html += `<div class="tl-item">
-          <div class="tl-dot ${s.adopted?'adopted':'pending'}"></div>
-          <div class="tl-time">${s.time||''}</div>
-          <div class="tl-title">${s.title}</div>
-          ${s.desc ? `<div class="tl-desc">${s.desc}</div>` : ''}
-          <div class="tl-meta">
-            <span class="badge ${s.adopted?'badge-green':'badge-amber'}">${s.adopted?'채택됨':'검토 중'}</span>
-            <span style="font-size:11px;color:var(--hint)">by ${s.name}</span>
-            ${isAdmin ? `
-              <button onclick="toggleAdopt('${key}', ${s.adopted})" style="font-size:11px;padding:2px 8px">${s.adopted?'채택 취소':'채택'}</button>
-              <button class="danger-btn" onclick="deleteSug('${key}')">🗑</button>` : ''}
-          </div>
-        </div>`;
-      });
-      html += `</div></div>`;
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,onValue,set,push,remove,update}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const firebaseConfig={apiKey:"AIzaSyBwDn827_L82baptEmB6E91pMfbTD0gG9E",authDomain:"junkyeong-tour.firebaseapp.com",databaseURL:"https://junkyeong-tour-default-rtdb.firebaseio.com",projectId:"junkyeong-tour",storageBucket:"junkyeong-tour.firebasestorage.app",messagingSenderId:"145452062852",appId:"1:145452062852:web:5abc73825c4e42e204cad1"};
+const app=initializeApp(firebaseConfig),db=getDatabase(app);
+const ADMIN_PW="1221";let isAdmin=false;
+const MEMBERS=["박준경","권재욱","이내원","김우경","정세인"];
+const DAYS=["7/15","7/16","7/17","7/18","7/19","7/20","7/21"];
+const DAY_LABELS={"7/15":"7월 15일 (화)","7/16":"7월 16일 (수)","7/17":"7월 17일 (목)","7/18":"7월 18일 (금)","7/19":"7월 19일 (토)","7/20":"7월 20일 (일)","7/21":"7월 21일 (월)"};
+const catBadge={식사:"badge-amber",교통:"badge-blue",숙소:"badge-blue",관광:"badge-green",쇼핑:"badge-gray",기타:"badge-gray"};
+const typeIcon={숙소:"🏨",맛집:"🍜",관광:"📸",카페:"☕"};
+const typeBadge={숙소:"badge-blue",맛집:"badge-amber",관광:"badge-green",카페:"badge-gray"};
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
+function setSynced(){document.getElementById("sync-dot").className="sync-dot live";document.getElementById("sync-label").textContent="실시간 연결됨";}
+function setError(){document.getElementById("sync-dot").className="sync-dot error";document.getElementById("sync-label").textContent="연결 오류";}
+function timeToMin(t){if(!t)return 9999;const p=t.split(":");return parseInt(p[0])*60+parseInt(p[1]||0);}
+// D-DAY
+(function(){const now=new Date(),dep=new Date("2026-07-15"),diff=Math.ceil((dep-now)/(1000*60*60*24));
+const d=document.getElementById("dday-num"),l=document.getElementById("dday-label");
+if(diff>0){d.textContent="D-"+diff;l.textContent="출발까지";}else if(diff===0){d.textContent="D-Day";l.textContent="오늘 출발!";}else{d.textContent="D+"+Math.abs(diff);l.textContent="여행 완료";}})();
+// PAGE NAV
+const PAGES=["home","schedule","expense","checklist","places","transport","japanese","fun","community"];
+window.showPage=function(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll("#main-nav button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-"+id).classList.add("active");
+  document.querySelectorAll("#main-nav button")[PAGES.indexOf(id)].classList.add("active");
+  if(id==="japanese")renderJapanese();
+  if(id==="community"){renderNotices();renderPledges();renderReviews();renderHellos();}
+  if(id==="fun"){renderFineList();}
+};
+// SUB TABS
+window.showSubTab=function(name,idx){
+  const page=document.querySelector(".page.active");
+  const panels=page.querySelectorAll("[id$=-panel-0],[id$=-panel-1],[id$=-panel-2],[id$=-panel-3]");
+  panels.forEach(p=>p.style.display="none");
+  // find matching panel
+  const prefix=name;
+  const panel=document.getElementById(name.split("-").length>1?name+"-"+idx:Object.keys({transport:1,fun:1,community:1}).map(k=>k+"-panel-"+idx).find(id=>document.getElementById(id)));
+  // simpler approach
+  page.querySelectorAll("[id*='-panel-']").forEach(p=>p.style.display="none");
+  const found=page.querySelector("[id*='-panel-"+idx+"']");
+  if(found)found.style.display="";
+  page.querySelectorAll(".sub-tab").forEach(b=>b.classList.remove("active"));
+  page.querySelectorAll(".sub-tab")[idx]?.classList.add("active");
+};
+// ADMIN
+window.checkAdmin=function(){
+  const pw=document.getElementById("admin-pw").value,st=document.getElementById("admin-status");
+  if(pw===ADMIN_PW){isAdmin=true;st.textContent="✓ 관리자 모드 활성화";st.style.color="#2a7a4f";renderSchedule();renderNotices();}
+  else{st.textContent="✗ 비밀번호 오류";st.style.color="#c8472a";}
+};
+// TIMETABLES
+const TT={
+  free:[{day:"7/15",time:"19:00",title:"신주쿠 도착 · 저녁식사",desc:"숙소 체크인 후 근처 라멘",name:"박준경",adopted:true},{day:"7/16",time:"07:20",title:"신주쿠 러브조형물 집합",desc:"후지산 버스 탑승 (7:30 출발)",name:"박준경",adopted:true},{day:"7/16",time:"09:30",title:"등산장비 대여점",desc:"장비 수령",name:"박준경",adopted:true},{day:"7/16",time:"11:00",title:"후지 스바루 라인 5합목",desc:"도착 후 등반 준비",name:"박준경",adopted:true},{day:"7/16",time:"12:00",title:"스바시리 루트 등반 시작",desc:"5합목(2,305m) 출발",name:"박준경",adopted:true},{day:"7/16",time:"18:00",title:"오사다 산소 산장 체크인",desc:"2,450m · 저녁식사 · 취침",name:"박준경",adopted:true},{day:"7/17",time:"00:00",title:"새벽 정상 향해 출발",desc:"헤드랜턴 착용 · 약 5시간",name:"박준경",adopted:true},{day:"7/17",time:"04:30",title:"🌅 후지산 정상 (3,776m)",desc:"고라이코 (御来光) · 일출 감상",name:"박준경",adopted:true},{day:"7/17",time:"07:00",title:"하산 시작",desc:"요시다 루트로 하산",name:"박준경",adopted:true},{day:"7/17",time:"11:00",title:"5합목 도착 · 버스 탑승",desc:"신주쿠로 복귀",name:"박준경",adopted:true},{day:"7/17",time:"15:00",title:"신주쿠 도착",desc:"온천 or 자유 시간",name:"박준경",adopted:true}],
+  willer:[{day:"7/15",time:"19:00",title:"신주쿠 도착 · 저녁식사",desc:"숙소 체크인",name:"박준경",adopted:true},{day:"7/16",time:"06:20",title:"신주쿠 러브조형물 집합",desc:"WILLER 버스 탑승",name:"박준경",adopted:true},{day:"7/16",time:"09:30",title:"등산장비 대여점",desc:"장비 픽업",name:"박준경",adopted:true},{day:"7/16",time:"11:00",title:"후지 5합목 도착",desc:"가이드와 합류",name:"박준경",adopted:true},{day:"7/16",time:"12:00",title:"요시다 루트 등반 시작",desc:"5합목(2,305m) 출발",name:"박준경",adopted:true},{day:"7/16",time:"17:00",title:"본8합목 토모에칸 체크인",desc:"3,400m · 저녁식사 · 취침",name:"박준경",adopted:true},{day:"7/17",time:"04:00",title:"산장 출발 · 정상 향해",desc:"가이드 동행",name:"박준경",adopted:true},{day:"7/17",time:"04:30",title:"🌅 9합목 일출 감상",desc:"고라이코",name:"박준경",adopted:true},{day:"7/17",time:"05:30",title:"후지산 정상 (3,776m)",desc:"정상 등정!",name:"박준경",adopted:true},{day:"7/17",time:"07:00",title:"산장 복귀 · 아침식사",desc:"하산 준비",name:"박준경",adopted:true},{day:"7/17",time:"08:00",title:"하산 시작",desc:"요시다 루트",name:"박준경",adopted:true},{day:"7/17",time:"15:00",title:"신주쿠 도착",desc:"해산",name:"박준경",adopted:true}],
+  fmg:[{day:"7/15",time:"19:00",title:"신주쿠 도착 · 저녁식사",desc:"숙소 체크인",name:"박준경",adopted:true},{day:"7/16",time:"06:30",title:"호텔 로비 집합",desc:"FMG 가이드 픽업",name:"박준경",adopted:true},{day:"7/16",time:"09:00",title:"FMG 베이스캠프",desc:"장비 점검",name:"박준경",adopted:true},{day:"7/16",time:"11:00",title:"후지산 5합목 도착",desc:"등반 시작",name:"박준경",adopted:true},{day:"7/16",time:"16:00",title:"8합목 산장 도착",desc:"3,400m · 저녁식사",name:"박준경",adopted:true},{day:"7/17",time:"01:30",title:"산장 출발",desc:"영어 가이드 동행",name:"박준경",adopted:true},{day:"7/17",time:"04:30",title:"🌅 정상 · 일출",desc:"고라이코 · 정상 증명서 발급",name:"박준경",adopted:true},{day:"7/17",time:"05:30",title:"산장 복귀 · 아침식사",desc:"하산 준비",name:"박준경",adopted:true},{day:"7/17",time:"08:00",title:"하산 시작",desc:"5합목까지 약 3시간",name:"박준경",adopted:true},{day:"7/17",time:"14:30",title:"도쿄 호텔 드롭오프",desc:"해산",name:"박준경",adopted:true}]
+};
+window.loadTimetable=async function(plan){
+  if(!isAdmin){alert("관리자 모드에서만 사용할 수 있어요.");return;}
+  const names={free:"🅐 자유여행",willer:"🅑 WILLER 투어",fmg:"🅒 FMG 투어"};
+  if(!confirm(names[plan]+" 타임테이블을 불러올까요?\n기존 7/15~17 일정은 삭제됩니다."))return;
+  const del=Object.entries(suggestionsData).filter(([,s])=>["7/15","7/16","7/17"].includes(s.day)).map(([k])=>k);
+  for(const k of del)await remove(ref(db,"suggestions/"+k));
+  for(const item of TT[plan])await push(ref(db,"suggestions"),item);
+  document.getElementById("timetable-status").textContent="✓ "+names[plan]+" 타임테이블이 적용되었어요!";
+  toast(names[plan]+" 적용 완료!");
+};
+// SCHEDULE
+let suggestionsData={};
+onValue(ref(db,"suggestions"),(snap)=>{
+  suggestionsData=snap.val()||{};setSynced();renderSchedule();
+  document.getElementById("adopted-count").textContent=Object.values(suggestionsData).filter(s=>s.adopted).length;
+},setError);
+function renderSchedule(){
+  let html="";
+  DAYS.forEach(day=>{
+    const items=Object.entries(suggestionsData).filter(([,s])=>s.day===day).sort((a,b)=>timeToMin(a[1].time)-timeToMin(b[1].time));
+    if(!items.length)return;
+    html+=`<div class="day-block"><div class="day-title">${DAY_LABELS[day]}</div><div class="tl-wrap">`;
+    items.forEach(([key,s])=>{
+      html+=`<div class="tl-item"><div class="tl-dot ${s.adopted?"adopted":"pending"}"></div>
+        <div class="tl-time">${s.time||""}</div><div class="tl-title">${s.title}</div>
+        ${s.desc?`<div class="tl-desc">${s.desc}</div>`:""}
+        <div class="tl-meta"><span class="badge ${s.adopted?"badge-green":"badge-amber"}">${s.adopted?"채택됨":"검토 중"}</span>
+          <span style="font-size:11px;color:var(--hint)">by ${s.name}</span>
+          ${isAdmin?`<button onclick="toggleAdopt('${key}',${s.adopted})" style="font-size:11px;padding:2px 8px">${s.adopted?"채택 취소":"채택"}</button>
+          <button class="danger-btn" onclick="deleteSug('${key}')">🗑</button>`:""}
+        </div></div>`;
     });
-
-    const pending = Object.entries(suggestionsData).filter(([,s]) => !s.adopted);
-    if (isAdmin && pending.length) {
-      html += `<div style="margin-top:8px"><div class="section-label">검토 대기 (${pending.length}건)</div>`;
-      pending.forEach(([key, s]) => {
-        html += `<div class="pending-card">
-          <div>
-            <div style="font-size:13px;font-weight:500">${DAY_LABELS[s.day]} ${s.time||''} · ${s.title}</div>
-            ${s.desc ? `<div style="font-size:12px;color:var(--amber);margin-top:2px">${s.desc}</div>` : ''}
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">by ${s.name}</div>
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <button class="primary" onclick="toggleAdopt('${key}', false)" style="font-size:12px;padding:5px 12px">채택</button>
-            <button class="danger-btn" onclick="deleteSug('${key}')">🗑</button>
-          </div>
-        </div>`;
-      });
-      html += '</div>';
-    }
-
-    list.innerHTML = html || '<div style="padding:24px 0;text-align:center;color:var(--muted);font-size:13px">아직 일정이 없어요. 위에서 제안해 보세요!</div>';
-  }
-
-  window.addSuggestion = function() {
-    const day = document.getElementById('sug-day').value;
-    const time = document.getElementById('sug-time').value.trim();
-    const title = document.getElementById('sug-title').value.trim();
-    const desc = document.getElementById('sug-desc').value.trim();
-    const name = document.getElementById('sug-name').value;
-    if (!title || !name) return alert('장소명과 제안자를 입력해 주세요.');
-    push(ref(db, 'suggestions'), { day, time, title, desc, name, adopted: false });
-    document.getElementById('sug-title').value = '';
-    document.getElementById('sug-desc').value = '';
-    document.getElementById('sug-time').value = '';
-    document.getElementById('sug-name').value = '';
-    toast('일정이 제안되었어요!');
-  };
-
-  window.toggleAdopt = function(key, current) {
-    update(ref(db, 'suggestions/' + key), { adopted: !current });
-    toast(!current ? '일정이 채택되었어요!' : '채택이 취소되었어요.');
-  };
-
-  window.deleteSug = function(key) {
-    if (!confirm('이 일정을 삭제할까요?')) return;
-    remove(ref(db, 'suggestions/' + key));
-    toast('삭제되었어요.');
-  };
-
-  // ─── EXPENSES ───
-  let expensesData = {};
-
-  onValue(ref(db, 'expenses'), (snap) => {
-    expensesData = snap.val() || {};
-    renderExpense();
+    html+=`</div></div>`;
   });
-
-  function renderExpense() {
-    const items = Object.entries(expensesData);
-    const total = items.reduce((a,[,e]) => a + (e.amount||0), 0);
-    const per = Math.round(total / 5);
-    const paid = {};
-    MEMBERS.forEach(m => paid[m] = 0);
-    items.forEach(([,e]) => { if (paid[e.payer] !== undefined) paid[e.payer] += e.amount; });
-
-    document.getElementById('expense-summary').innerHTML = `
-      <div class="metric"><div class="metric-label">총 지출</div><div class="metric-value">${total.toLocaleString()}원</div></div>
-      <div class="metric"><div class="metric-label">1인 부담</div><div class="metric-value">${per.toLocaleString()}원</div></div>
-      <div class="metric"><div class="metric-label">항목 수</div><div class="metric-value">${items.length}건</div></div>`;
-
-    const listEl = document.getElementById('expense-list');
-    if (!items.length) {
-      listEl.innerHTML = '<div class="card card-sm" style="color:var(--muted);text-align:center;padding:20px">지출 내역이 없어요.</div>';
-    } else {
-      listEl.innerHTML = '<div class="card" style="padding:8px 18px">' +
-        items.map(([key, e]) => `
-          <div class="expense-item">
-            <div>
-              <span style="font-size:14px;font-weight:500">${e.title}</span>
-              <span class="badge ${catBadge[e.cat]||'badge-gray'}" style="margin-left:8px">${e.cat}</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-              <div style="text-align:right">
-                <div style="font-size:14px;font-weight:500">${(e.amount||0).toLocaleString()}원</div>
-                <div style="font-size:11px;color:var(--hint)">${e.payer}</div>
-              </div>
-              <button class="danger-btn" onclick="deleteExpense('${key}')">🗑</button>
-            </div>
-          </div>`).join('') + '</div>';
-    }
-
-    let settle = '<div class="section-label" style="margin-top:20px">정산 결과</div><div class="card" style="padding:8px 18px">';
-    MEMBERS.forEach(m => {
-      const diff = (paid[m]||0) - per;
-      const sign = diff >= 0 ? '+' : '';
-      const color = diff >= 0 ? 'var(--green)' : 'var(--accent)';
-      settle += `<div class="settle-row">
-        <span style="font-weight:500">${m}</span>
-        <div>
-          <span style="font-size:12px;color:var(--muted);margin-right:12px">낸 돈 ${(paid[m]||0).toLocaleString()}원</span>
-          <span style="font-weight:500;color:${color}">${sign}${diff.toLocaleString()}원</span>
+  const pending=Object.entries(suggestionsData).filter(([,s])=>!s.adopted);
+  if(isAdmin&&pending.length){
+    html+=`<div style="margin-top:8px"><div class="section-label">검토 대기 (${pending.length}건)</div>`;
+    pending.forEach(([key,s])=>{
+      html+=`<div class="pending-card"><div><div style="font-size:13px;font-weight:500">${DAY_LABELS[s.day]} ${s.time||""} · ${s.title}</div>
+        ${s.desc?`<div style="font-size:12px;color:var(--amber);margin-top:2px">${s.desc}</div>`:""}
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">by ${s.name}</div></div>
+        <div style="display:flex;gap:6px"><button class="primary" onclick="toggleAdopt('${key}',false)" style="font-size:12px;padding:4px 10px">채택</button>
+        <button class="danger-btn" onclick="deleteSug('${key}')">🗑</button></div></div>`;
+    });
+    html+="</div>";
+  }
+  document.getElementById("schedule-list").innerHTML=html||"<div style="padding:24px 0;text-align:center;color:var(--muted);font-size:13px">아직 일정이 없어요. 위에서 제안해 보세요!</div>";
+}
+window.addSuggestion=function(){
+  const day=document.getElementById("sug-day").value,time=document.getElementById("sug-time").value.trim();
+  const title=document.getElementById("sug-title").value.trim(),desc=document.getElementById("sug-desc").value.trim();
+  const name=document.getElementById("sug-name").value;
+  if(!title||!name)return alert("장소명과 제안자를 입력해 주세요.");
+  push(ref(db,"suggestions"),{day,time,title,desc,name,adopted:false});
+  ["sug-title","sug-desc","sug-time"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("sug-name").value="";toast("일정이 제안되었어요!");
+};
+window.toggleAdopt=function(key,current){update(ref(db,"suggestions/"+key),{adopted:!current});toast(!current?"일정이 채택되었어요!":"채택이 취소되었어요.");};
+window.deleteSug=function(key){if(!confirm("이 일정을 삭제할까요?"))return;remove(ref(db,"suggestions/"+key));toast("삭제되었어요.");};
+// EXPENSE
+let expensesData={},transfersData={};
+onValue(ref(db,"expenses"),(snap)=>{expensesData=snap.val()||{};renderExpense();});
+onValue(ref(db,"transfers"),(snap)=>{transfersData=snap.val()||{};renderExpense();});
+window.calcExchange=function(){
+  const amt=parseFloat(document.getElementById("ex-amount").value),dir=document.getElementById("ex-dir").value,res=document.getElementById("ex-result");
+  if(!amt||isNaN(amt)){res.style.display="none";return;}
+  res.style.display="";
+  res.textContent=dir==="yen"?`${amt.toLocaleString()}엔 = ${Math.round(amt*9.2).toLocaleString()}원`:`${amt.toLocaleString()}원 = ${Math.round(amt/9.2).toLocaleString()}엔`;
+};
+function renderExpense(){
+  const items=Object.entries(expensesData);
+  const total=items.reduce((a,[,e])=>a+(e.amount||0),0),per=Math.round(total/5);
+  const paid={};MEMBERS.forEach(m=>paid[m]=0);
+  items.forEach(([,e])=>{if(paid[e.payer]!==undefined)paid[e.payer]+=e.amount;});
+  document.getElementById("expense-summary").innerHTML=`
+    <div class="metric"><div class="metric-label">총 지출</div><div class="metric-value">${total.toLocaleString()}원</div></div>
+    <div class="metric"><div class="metric-label">1인 부담</div><div class="metric-value">${per.toLocaleString()}원</div></div>
+    <div class="metric"><div class="metric-label">항목 수</div><div class="metric-value">${items.length}건</div></div>`;
+  document.getElementById("expense-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">지출 내역이 없어요.</div>":
+    "<div class="card" style="padding:6px 16px">"+items.map(([key,e])=>`<div class="expense-item">
+      <div><span style="font-size:14px;font-weight:500">${e.title}</span><span class="badge ${catBadge[e.cat]||"badge-gray"}" style="margin-left:8px">${e.cat}</span></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <div style="text-align:right"><div style="font-size:14px;font-weight:500">${(e.amount||0).toLocaleString()}원</div><div style="font-size:11px;color:var(--hint)">${e.payer}</div></div>
+        <button class="danger-btn" onclick="deleteExpense('${key}')">🗑</button></div></div>`).join("")+"</div>";
+  // 정산 알고리즘
+  const bal={};MEMBERS.forEach(m=>bal[m]=(paid[m]||0)-per);
+  const cred=MEMBERS.filter(m=>bal[m]>0).map(m=>({name:m,amt:bal[m]}));
+  const deb=MEMBERS.filter(m=>bal[m]<0).map(m=>({name:m,amt:-bal[m]}));
+  const debts=[];let ci=0,di=0;
+  const cc=cred.map(c=>({...c})),dc=deb.map(d=>({...d}));
+  while(ci<cc.length&&di<dc.length){
+    const s=Math.min(cc[ci].amt,dc[di].amt);
+    if(s>0)debts.push({from:dc[di].name,to:cc[ci].name,amount:Math.round(s)});
+    cc[ci].amt-=s;dc[di].amt-=s;if(cc[ci].amt<1)ci++;if(dc[di].amt<1)di++;
+  }
+  let settle="<div class="section-label" style="margin-top:18px">💰 개인별 정산 현황</div><div class="card" style="padding:6px 16px;margin-bottom:12px">";
+  MEMBERS.forEach(m=>{
+    const diff=(paid[m]||0)-per,color=diff>=0?"var(--green)":"var(--accent)",status=diff>=0?"받을 돈":"내야 할 돈";
+    settle+=`<div class="settle-row"><span style="font-weight:500">${m}</span>
+      <div><span style="font-size:11px;color:var(--muted);margin-right:10px">낸 돈 ${(paid[m]||0).toLocaleString()}원</span>
+      <span style="font-size:12px;color:${color};font-weight:500">${status} ${Math.abs(diff).toLocaleString()}원</span></div></div>`;
+  });
+  settle+="</div><div class="section-label">📲 송금 목록</div>";
+  if(!debts.length){settle+="<div class="card" style="text-align:center;color:var(--green);padding:16px;font-size:13px">🎉 모든 정산이 완료되었어요!</div>";}
+  else{
+    settle+="<div class="card" style="padding:6px 16px">";
+    debts.forEach(d=>{
+      const key=`transfer_${d.from}_${d.to}`,done=transfersData[key];
+      settle+=`<div class="settle-row" style="opacity:${done?.5:1}">
+        <div style="display:flex;align-items:center;gap:8px;flex:1">
+          <span style="font-size:16px">${done?"✅":"💸"}</span>
+          <div><div style="font-size:13px;font-weight:500"><span style="color:var(--accent)">${d.from}</span><span style="color:var(--muted);margin:0 6px">→</span><span style="color:var(--green)">${d.to}</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:1px">${d.amount.toLocaleString()}원</div></div>
         </div>
+        <button onclick="toggleTransfer('${key}')" style="font-size:11px;padding:4px 10px;${done?"background:var(--green-light);color:var(--green);border-color:var(--green)":""}">${done?"완료 취소":"송금 완료"}</button>
       </div>`;
     });
-    document.getElementById('settle-section').innerHTML = settle + '</div>';
+    settle+="</div>";
   }
-
-  window.addExpense = function() {
-    const title = document.getElementById('exp-title').value.trim();
-    const amount = parseInt(document.getElementById('exp-amount').value);
-    const payer = document.getElementById('exp-payer').value;
-    const cat = document.getElementById('exp-cat').value;
-    if (!title || !amount || !payer) return alert('항목, 금액, 낸 사람을 모두 입력해 주세요.');
-    push(ref(db, 'expenses'), { title, amount, payer, cat });
-    document.getElementById('exp-title').value = '';
-    document.getElementById('exp-amount').value = '';
-    toast('지출이 추가되었어요!');
-  };
-
-  window.deleteExpense = function(key) {
-    remove(ref(db, 'expenses/' + key));
-    toast('삭제되었어요.');
-  };
-
-  // ─── CHECKLIST ───
-  onValue(ref(db, 'checklist'), (snap) => {
-    const data = snap.val() || {};
-    renderChecklist(data);
-  });
-
-  function renderChecklist(data) {
-    const items = Object.entries(data);
-    const cats = [...new Set(items.map(([,c]) => c.cat))];
-    if (!items.length) {
-      document.getElementById('checklist-list').innerHTML = '<div class="card card-sm" style="color:var(--muted);text-align:center;padding:20px">준비물이 없어요.</div>';
-      return;
-    }
-    document.getElementById('checklist-list').innerHTML = cats.map(cat => {
-      const catItems = items.filter(([,c]) => c.cat === cat);
-      const doneCount = catItems.filter(([,c]) => c.done).length;
-      return `<div class="card" style="padding:8px 18px;margin-bottom:12px">
-        <div class="section-label">${cat} (${doneCount}/${catItems.length})</div>
-        ${catItems.map(([key, c]) => `
-          <div class="check-item ${c.done?'done':''}" onclick="toggleCheck('${key}', ${c.done})">
-            <input type="checkbox" ${c.done?'checked':''} onclick="event.stopPropagation();toggleCheck('${key}', ${c.done})" />
-            <span class="check-text" style="flex:1">${c.text}</span>
-            <button class="danger-btn" onclick="event.stopPropagation();deleteCheck('${key}')">🗑</button>
-          </div>`).join('')}
-      </div>`;
-    }).join('');
-  }
-
-  window.addCheckItem = function() {
-    const text = document.getElementById('check-input').value.trim();
-    const cat = document.getElementById('check-cat').value;
-    if (!text) return;
-    push(ref(db, 'checklist'), { text, cat, done: false });
-    document.getElementById('check-input').value = '';
-    toast('준비물이 추가되었어요!');
-  };
-
-  window.toggleCheck = function(key, current) {
-    update(ref(db, 'checklist/' + key), { done: !current });
-  };
-
-  window.deleteCheck = function(key) {
-    remove(ref(db, 'checklist/' + key));
-    toast('삭제되었어요.');
-  };
-
-  // ─── PLACES ───
-  onValue(ref(db, 'places'), (snap) => {
-    const data = snap.val() || {};
-    renderPlaces(data);
-  });
-
-  function renderPlaces(data) {
-    const items = Object.entries(data);
-    const types = ['숙소','맛집','관광','카페'];
-    let html = '';
-    types.forEach(type => {
-      const typeItems = items.filter(([,p]) => p.type === type);
-      if (!typeItems.length) return;
-      html += `<div style="margin-bottom:20px">
-        <div class="section-label">${typeIcon[type]} ${type}</div>
-        <div class="card" style="padding:8px 18px">
-          ${typeItems.map(([key, p]) => {
-            const q = encodeURIComponent((p.name||'') + ' ' + (p.area||'') + ' 도쿄');
-            return `<div class="place-item">
-              <div>
-                <div class="place-name">${p.name} <span class="badge ${typeBadge[p.type]||'badge-gray'}">${p.area||''}</span></div>
-                ${p.note ? `<div class="place-note">${p.note}</div>` : ''}
-              </div>
-              <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-                <a href="https://www.google.com/maps/search/${q}" target="_blank" class="map-link">🗺 지도 보기</a>
-                <button class="danger-btn" onclick="deletePlace('${key}')">🗑</button>
-              </div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`;
-    });
-    document.getElementById('places-list').innerHTML = html || '<div class="card card-sm" style="color:var(--muted);text-align:center;padding:20px">장소가 없어요.</div>';
-  }
-
-  window.addPlace = function() {
-    const type = document.getElementById('place-type').value;
-    const name = document.getElementById('place-name').value.trim();
-    const area = document.getElementById('place-area').value.trim();
-    const note = document.getElementById('place-note').value.trim();
-    if (!name) return;
-    push(ref(db, 'places'), { type, name, area, note });
-    document.getElementById('place-name').value = '';
-    document.getElementById('place-area').value = '';
-    document.getElementById('place-note').value = '';
-    toast('장소가 추가되었어요!');
-  };
-
-  window.deletePlace = function(key) {
-    remove(ref(db, 'places/' + key));
-    toast('삭제되었어요.');
-  };
-
-
-
+  document.getElementById("settle-section").innerHTML=settle;
+}
+window.addExpense=function(){
+  const title=document.getElementById("exp-title").value.trim(),amount=parseInt(document.getElementById("exp-amount").value);
+  const payer=document.getElementById("exp-payer").value,cat=document.getElementById("exp-cat").value;
+  if(!title||!amount||!payer)return alert("항목, 금액, 낸 사람을 모두 입력해 주세요.");
+  push(ref(db,"expenses"),{title,amount,payer,cat});
+  document.getElementById("exp-title").value="";document.getElementById("exp-amount").value="";toast("지출이 추가되었어요!");
+};
+window.deleteExpense=function(key){remove(ref(db,"expenses/"+key));toast("삭제되었어요.");};
+window.toggleTransfer=function(key){
+  if(transfersData[key]){remove(ref(db,"transfers/"+key));toast("송금 완료 취소했어요.");}
+  else{set(ref(db,"transfers/"+key),true);toast("송금 완료! 🎉");}
+};
+// CHECKLIST
+onValue(ref(db,"checklist"),(snap)=>{renderChecklist(snap.val()||{});});
+function renderChecklist(data){
+  const items=Object.entries(data),done=items.filter(([,c])=>c.done).length,pct=items.length?Math.round(done/items.length*100):0;
+  document.getElementById("checklist-progress-label").textContent=`준비 완료 ${done}/${items.length} (${pct}%)`;
+  document.getElementById("checklist-progress-bar").style.width=pct+"%";
+  const cats=[...new Set(items.map(([,c])=>c.cat))];
+  document.getElementById("checklist-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">준비물이 없어요.</div>":
+    cats.map(cat=>{
+      const ci=items.filter(([,c])=>c.cat===cat);
+      return `<div style="margin-bottom:12px"><div class="section-label">${cat} (${ci.filter(([,c])=>c.done).length}/${ci.length})</div>
+        <div class="card" style="padding:4px 14px">${ci.map(([key,c])=>`<div class="check-item ${c.done?"done":""}" onclick="toggleCheck('${key}',${c.done})">
+          <input type="checkbox" ${c.done?"checked":""} onclick="event.stopPropagation();toggleCheck('${key}',${c.done})" style="width:15px;height:15px"/>
+          <span class="check-text" style="flex:1">${c.text}</span>
+          <button onclick="event.stopPropagation();deleteCheck('${key}')" class="danger-btn">🗑</button></div>`).join("")}</div></div>`;
+    }).join("");
+}
+window.addCheckItem=function(){
+  const text=document.getElementById("check-input").value.trim(),cat=document.getElementById("check-cat").value;
+  if(!text)return;push(ref(db,"checklist"),{text,cat,done:false});document.getElementById("check-input").value="";toast("준비물이 추가되었어요!");
+};
+window.toggleCheck=function(key,current){update(ref(db,"checklist/"+key),{done:!current});};
+window.deleteCheck=function(key){remove(ref(db,"checklist/"+key));toast("삭제되었어요.");};
+// PLACES
+onValue(ref(db,"places"),(snap)=>{renderPlaces(snap.val()||{});});
+function renderPlaces(data){
+  const items=Object.entries(data),types=["숙소","맛집","관광","카페"];
+  document.getElementById("places-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">장소가 없어요.</div>":
+    types.map(type=>{
+      const ti=items.filter(([,p])=>p.type===type);if(!ti.length)return"";
+      return `<div style="margin-bottom:16px"><div class="section-label">${typeIcon[type]} ${type}</div>
+        <div class="card" style="padding:6px 14px">${ti.map(([key,p])=>{
+          const q=encodeURIComponent((p.name||"")+" "+(p.area||"")+" 도쿄");
+          return `<div class="place-item"><div><div class="place-name">${p.name} <span class="badge ${typeBadge[p.type]||"badge-gray"}">${p.area||""}</span></div>${p.note?`<div class="place-note">${p.note}</div>`:""}</div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+              <a href="https://www.google.com/maps/search/${q}" target="_blank" class="map-link">🗺 지도</a>
+              <button class="danger-btn" onclick="deletePlace('${key}')">🗑</button></div></div>`;
+        }).join("")}</div></div>`;
+    }).join("");
+}
+window.addPlace=function(){
+  const type=document.getElementById("place-type").value,name=document.getElementById("place-name").value.trim();
+  const area=document.getElementById("place-area").value.trim(),note=document.getElementById("place-note").value.trim();
+  if(!name)return;push(ref(db,"places"),{type,name,area,note});
+  ["place-name","place-area","place-note"].forEach(id=>document.getElementById(id).value="");toast("장소가 추가되었어요!");
+};
+window.deletePlace=function(key){remove(ref(db,"places/"+key));toast("삭제되었어요.");};
+// JAPANESE
+const JP=[
+  {cat:"긴급",kor:"아파요",jp:"痛いです",read:"이타이데스"},
+  {cat:"긴급",kor:"도와주세요",jp:"助けてください",read:"타스케테 쿠다사이"},
+  {cat:"긴급",kor:"병원이 어디예요?",jp:"病院はどこですか？",read:"뵤인와 도코데스카"},
+  {cat:"긴급",kor:"구급차를 불러주세요",jp:"救急車を呼んでください",read:"큐큐샤오 욘데 쿠다사이"},
+  {cat:"긴급",kor:"경찰을 불러주세요",jp:"警察を呼んでください",read:"케이사츠오 욘데 쿠다사이"},
+  {cat:"긴급",kor:"화장실이 어디예요?",jp:"トイレはどこですか？",read:"토이레와 도코데스카"},
+  {cat:"긴급",kor:"길을 잃었어요",jp:"迷子になりました",read:"마이고니 나리마시타"},
+  {cat:"식당",kor:"이거 주세요",jp:"これをください",read:"코레오 쿠다사이"},
+  {cat:"식당",kor:"맛있어요!",jp:"おいしいです！",read:"오이시이데스"},
+  {cat:"식당",kor:"얼마예요?",jp:"いくらですか？",read:"이쿠라데스카"},
+  {cat:"식당",kor:"계산해 주세요",jp:"お会計をお願いします",read:"오카이케이오 오네가이시마스"},
+  {cat:"식당",kor:"물 주세요",jp:"お水をください",read:"오미즈오 쿠다사이"},
+  {cat:"식당",kor:"영어 메뉴 있어요?",jp:"英語のメニューはありますか？",read:"에이고노 메뉴와 아리마스카"},
+  {cat:"쇼핑",kor:"이거 있어요?",jp:"これはありますか？",read:"코레와 아리마스카"},
+  {cat:"쇼핑",kor:"카드 되나요?",jp:"カードは使えますか？",read:"카도와 츠카에마스카"},
+  {cat:"쇼핑",kor:"봉투 주세요",jp:"袋をください",read:"후쿠로오 쿠다사이"},
+  {cat:"쇼핑",kor:"다른 사이즈 있어요?",jp:"他のサイズはありますか？",read:"호카노 사이즈와 아리마스카"},
+  {cat:"교통",kor:"신주쿠 가는 전철은?",jp:"新宿行きの電車は？",read:"신쥬쿠유키노 덴샤와"},
+  {cat:"교통",kor:"여기 어떻게 가요?",jp:"ここへはどう行きますか？",read:"코코에와 도이키마스카"},
+  {cat:"교통",kor:"다음 역이 어디예요?",jp:"次の駅はどこですか？",read:"츠기노 에키와 도코데스카"},
+  {cat:"교통",kor:"이 버스 후지산 가요?",jp:"このバスは富士山に行きますか？",read:"코노 바스와 후지산니 이키마스카"},
+  {cat:"후지산",kor:"정상까지 얼마나 걸려요?",jp:"山頂までどのくらいかかりますか？",read:"산쵸마데 도노쿠라이 카카리마스카"},
+  {cat:"후지산",kor:"고산병이에요",jp:"高山病です",read:"코잔뵤데스"},
+  {cat:"후지산",kor:"내려가야 해요",jp:"下山しなければなりません",read:"게잔 시나케레바 나리마센"},
+  {cat:"후지산",kor:"산장이 어디예요?",jp:"山小屋はどこですか？",read:"야마고야와 도코데스카"},
+  {cat:"후지산",kor:"일출이 몇 시예요?",jp:"日の出は何時ですか？",read:"히노데와 난지데스카"},
+];
+let currentJpCat="전체";
+window.showJpCat=function(cat,idx){
+  currentJpCat=cat;
+  document.querySelectorAll("#jp-tabs .sub-tab").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll("#jp-tabs .sub-tab")[idx]?.classList.add("active");
+  renderJapanese();
+};
+function renderJapanese(){
+  const filtered=currentJpCat==="전체"?JP:JP.filter(j=>j.cat===currentJpCat);
+  document.getElementById("jp-list").innerHTML=filtered.map(j=>`
+    <div class="jp-card" onclick="alert('${j.jp}\n(${j.read})')">
+      <span class="jp-cat">${j.cat}</span>
+      <div class="jp-kor">${j.kor}</div>
+      <div class="jp-jp">${j.jp}</div>
+      <div class="jp-read">${j.read}</div>
+    </div>`).join("");
+}
+// FUN - ROULETTE
+let rouletteItems=["라멘","스시","야키토리","돈카츠","우동","카레","규동","이자카야"];
+function renderRouletteItems(){
+  document.getElementById("roulette-items").innerHTML=rouletteItems.map((item,i)=>
+    `<span class="reaction-btn" onclick="removeRouletteItem(${i})">${item} ×</span>`).join("");
+}
+window.addRouletteItem=function(){
+  const v=document.getElementById("roulette-input").value.trim();if(!v)return;
+  rouletteItems.push(v);document.getElementById("roulette-input").value="";renderRouletteItems();
+};
+window.removeRouletteItem=function(i){rouletteItems.splice(i,1);renderRouletteItems();};
+window.spinRoulette=function(){
+  if(!rouletteItems.length)return alert("메뉴를 추가해 주세요!");
+  const res=document.getElementById("roulette-result");res.style.display="flex";
+  let count=0;
+  const iv=setInterval(()=>{
+    res.textContent=rouletteItems[Math.floor(Math.random()*rouletteItems.length)];count++;
+    if(count>20){clearInterval(iv);const w=rouletteItems[Math.floor(Math.random()*rouletteItems.length)];res.textContent="🎉 "+w+" 🎉";toast(w+" 당첨!");}
+  },80);
+};
+renderRouletteItems();
+window.drawRole=function(role){
+  const member=MEMBERS[Math.floor(Math.random()*MEMBERS.length)];
+  const res=document.getElementById("role-result");res.style.display="block";
+  res.innerHTML=`<div style="font-size:14px;color:var(--muted);margin-bottom:8px">${role}</div><div style="font-size:32px;font-weight:700;color:var(--accent)">${member}</div>`;
+  toast(role+" → "+member+"!");
+};
+// FINES
+let finesData={};
+onValue(ref(db,"fines"),(snap)=>{finesData=snap.val()||{};renderFineList();});
+function renderFineList(){
+  const items=Object.entries(finesData);
+  document.getElementById("fine-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">벌칙이 없어요 😇</div>":
+    "<div class="card" style="padding:6px 14px">"+items.map(([key,f])=>`<div class="fine-item">
+      <div><div style="font-size:13px;font-weight:500">${f.victim} 🎯 ${f.title}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">이유: ${f.reason||"-"}</div></div>
+      <button class="danger-btn" onclick="deleteFine('${key}')">🗑</button></div>`).join("")+"</div>";
+}
+window.addFine=function(){
+  const title=document.getElementById("fine-title").value.trim(),victim=document.getElementById("fine-victim").value,reason=document.getElementById("fine-reason").value.trim();
+  if(!title||!victim)return alert("벌칙 내용과 대상을 입력해 주세요.");
+  push(ref(db,"fines"),{title,victim,reason});
+  ["fine-title","fine-reason"].forEach(id=>document.getElementById(id).value="");document.getElementById("fine-victim").value="";toast("벌칙 등록! 😈");
+};
+window.deleteFine=function(key){remove(ref(db,"fines/"+key));toast("삭제되었어요.");};
+// COMMUNITY
+function tsToDate(ts){return new Date(ts).toLocaleDateString("ko");}
+let noticesData={};
+onValue(ref(db,"notices"),(snap)=>{noticesData=snap.val()||{};renderNotices();});
+function renderNotices(){
+  const items=Object.entries(noticesData).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
+  const form=isAdmin?`<div class="card" style="margin-bottom:12px">
+    <div class="section-label">공지 작성</div>
+    <input type="text" id="notice-title" placeholder="제목" style="margin-bottom:8px"/>
+    <textarea id="notice-body" placeholder="내용"></textarea>
+    <button class="primary" onclick="addNotice()" style="margin-top:8px;width:100%">공지 올리기</button></div>`:"";
+  document.getElementById("notice-list").innerHTML=form+(!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">공지가 없어요.</div>":
+    items.map(([key,n])=>`<div class="card" style="margin-bottom:10px">
+      <div style="font-size:14px;font-weight:500;margin-bottom:6px">${n.title}</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6">${n.body}</div>
+      <div style="font-size:11px;color:var(--hint);margin-top:8px">${tsToDate(n.ts)} ${isAdmin?`<button class="danger-btn" onclick="deleteNotice('${key}')">🗑</button>`:""}</div>
+    </div>`).join(""));
+}
+window.addNotice=function(){
+  const title=document.getElementById("notice-title")?.value.trim(),body=document.getElementById("notice-body")?.value.trim();
+  if(!title||!body)return alert("제목과 내용을 입력해 주세요.");
+  push(ref(db,"notices"),{title,body,ts:Date.now()});toast("공지 등록!");
+};
+window.deleteNotice=function(key){remove(ref(db,"notices/"+key));toast("삭제되었어요.");};
+let pledgesData={};
+onValue(ref(db,"pledges"),(snap)=>{pledgesData=snap.val()||{};renderPledges();});
+function renderPledges(){
+  const items=Object.entries(pledgesData).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
+  document.getElementById("pledge-list").innerHTML=!items.length?"<div style="color:var(--muted);text-align:center;padding:16px;font-size:13px">아직 다짐이 없어요!</div>":
+    items.map(([key,p])=>`<div style="padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;border-left:3px solid var(--accent)">
+      <div style="font-size:14px;margin-bottom:4px">"${p.text}"</div>
+      <div style="font-size:11px;color:var(--muted)">— ${p.name} · ${tsToDate(p.ts)} ${isAdmin?`<button class="danger-btn" onclick="deletePledge('${key}')">🗑</button>`:""}</div>
+    </div>`).join("");
+}
+window.addPledge=function(){
+  const name=document.getElementById("pledge-name").value,text=document.getElementById("pledge-text").value.trim();
+  if(!name||!text)return alert("이름과 다짐을 입력해 주세요.");
+  push(ref(db,"pledges"),{name,text,ts:Date.now()});
+  document.getElementById("pledge-text").value="";document.getElementById("pledge-name").value="";toast("다짐 등록! 🔥");
+};
+window.deletePledge=function(key){remove(ref(db,"pledges/"+key));toast("삭제되었어요.");};
+let reviewsData={};
+onValue(ref(db,"reviews"),(snap)=>{reviewsData=snap.val()||{};renderReviews();});
+function renderReviews(){
+  const items=Object.entries(reviewsData).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
+  document.getElementById("review-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">아직 후기가 없어요!</div>":
+    items.map(([key,r])=>`<div class="card" style="margin-bottom:10px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:4px">${r.name} · ${r.title||""}</div>
+      <div style="font-size:13px;line-height:1.7">${r.text}</div>
+      <div style="font-size:11px;color:var(--hint);margin-top:6px">${tsToDate(r.ts)} ${isAdmin?`<button class="danger-btn" onclick="deleteReview('${key}')">🗑</button>`:""}</div>
+    </div>`).join("");
+}
+window.addReview=function(){
+  const name=document.getElementById("review-name").value,title=document.getElementById("review-title").value.trim(),text=document.getElementById("review-text").value.trim();
+  if(!name||!text)return alert("이름과 후기 내용을 입력해 주세요.");
+  push(ref(db,"reviews"),{name,title,text,ts:Date.now()});
+  ["review-title","review-text"].forEach(id=>document.getElementById(id).value="");document.getElementById("review-name").value="";toast("후기 등록! ✍️");
+};
+window.deleteReview=function(key){remove(ref(db,"reviews/"+key));toast("삭제되었어요.");};
+let hellosData={};
+onValue(ref(db,"hellos"),(snap)=>{hellosData=snap.val()||{};renderHellos();});
+function renderHellos(){
+  const items=Object.entries(hellosData).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
+  document.getElementById("hello-list").innerHTML=!items.length?"<div class="card" style="color:var(--muted);text-align:center;padding:16px">한마디를 남겨봐요!</div>":
+    "<div class="card" style="padding:6px 14px">"+items.map(([key,h])=>`<div class="settle-row">
+      <div><span style="font-weight:500;margin-right:8px">${h.name}</span><span style="color:var(--muted)">${h.text}</span></div>
+      ${isAdmin?`<button class="danger-btn" onclick="deleteHello('${key}')">🗑</button>`:""}</div>`).join("")+"</div>";
+}
+window.addHello=function(){
+  const name=document.getElementById("hello-name").value,text=document.getElementById("hello-text").value.trim();
+  if(!name||!text)return alert("이름과 내용을 입력해 주세요.");
+  push(ref(db,"hellos"),{name,text,ts:Date.now()});
+  document.getElementById("hello-text").value="";document.getElementById("hello-name").value="";toast("등록! 👋");
+};
+window.deleteHello=function(key){remove(ref(db,"hellos/"+key));toast("삭제되었어요.");};
 </script>
 </body>
 </html>
