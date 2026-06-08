@@ -419,14 +419,14 @@ onValue(ref(db,'transfers'),function(snap){transfersData=snap.val()||{};renderEx
 function renderExpense(){
   var items=Object.entries(expensesData);
   var total=items.reduce(function(a,e){return a+(e[1].amount||0);},0);
-  var per=Math.round(total/5);
+  var per=Math.round(total/MEMBERS.length);
   var paid={};
   MEMBERS.forEach(function(m){paid[m]=0;});
   items.forEach(function(e){if(paid[e[1].payer]!==undefined)paid[e[1].payer]+=e[1].amount;});
 
   document.getElementById('expense-summary').innerHTML=
-    '<div class="metric"><div class="metric-label">총 지출</div><div class="metric-value">'+total.toLocaleString()+'원</div></div>'+
-    '<div class="metric"><div class="metric-label">1인 부담</div><div class="metric-value">'+per.toLocaleString()+'원</div></div>'+
+    '<div class="metric"><div class="metric-label">총 지출</div><div class="metric-value">'+total.toLocaleString()+'원</div></div>'+ 
+    '<div class="metric"><div class="metric-label">1인 평균</div><div class="metric-value">'+per.toLocaleString()+'원</div></div>'+ 
     '<div class="metric"><div class="metric-label">항목 수</div><div class="metric-value">'+items.length+'건</div></div>';
 
   var listHtml='';
@@ -437,11 +437,11 @@ function renderExpense(){
     items.forEach(function(entry){
       var key=entry[0], e=entry[1];
       listHtml+='<div class="expense-item">';
-      listHtml+='<div><span style="font-size:14px;font-weight:500">'+e.title+'</span>';
-      listHtml+='<span class="badge '+(catBadge[e.cat]||'badge-gray')+'" style="margin-left:8px">'+e.cat+'</span></div>';
+      listHtml+='<div><span style="font-size:14px;font-weight:500">'+attr(e.title)+'</span>';
+      listHtml+='<span class="badge '+(catBadge[e.cat]||'badge-gray')+'" style="margin-left:8px">'+attr(e.cat)+'</span></div>';
       listHtml+='<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">';
       listHtml+='<div style="text-align:right"><div style="font-size:14px;font-weight:500">'+(e.amount||0).toLocaleString()+'원</div>';
-      listHtml+='<div style="font-size:11px;color:var(--hint)">'+e.payer+'</div></div>';
+      listHtml+='<div style="font-size:11px;color:var(--hint)">'+attr(e.payer)+'</div></div>';
       listHtml+='<button class="danger-btn" data-action="delete-expense" data-key="'+attr(key)+'">🗑</button>';
       listHtml+='</div></div>';
     });
@@ -449,92 +449,119 @@ function renderExpense(){
   }
   document.getElementById('expense-list').innerHTML=listHtml;
 
-  // 정산 알고리즘
-  function makeDebts(balance){
-    var cred=MEMBERS.filter(function(m){return balance[m]>0;}).map(function(m){return {name:m,amt:balance[m]};});
-    var deb=MEMBERS.filter(function(m){return balance[m]<0;}).map(function(m){return {name:m,amt:-balance[m]};});
-    var result=[], ci=0, di=0;
-    var cc=cred.map(function(c){return {name:c.name,amt:c.amt};});
-    var dc=deb.map(function(d){return {name:d.name,amt:d.amt};});
-    while(ci<cc.length&&di<dc.length){
-      var s=Math.min(cc[ci].amt,dc[di].amt);
-      if(s>0)result.push({from:dc[di].name,to:cc[ci].name,amount:Math.round(s)});
-      cc[ci].amt-=s; dc[di].amt-=s;
-      if(cc[ci].amt<1)ci++; if(dc[di].amt<1)di++;
-    }
-    return result;
+  // 정산 알고리즘: 지출 건마다 1/N 정산 사건을 만들고, 마지막에 사람별 송금 총합표를 보여준다.
+  // 예) A가 2,000,000원 결제 → B/C/D/E가 A에게 400,000원씩
+  //     B가 50,000원 결제 → A/C/D/E가 B에게 10,000원씩
+  function transferId(expenseKey, from, to){
+    return expenseKey+'__'+from+'__'+to;
   }
 
-  var baseBal={};
-  MEMBERS.forEach(function(m){baseBal[m]=(paid[m]||0)-per;});
-
-  // 1차 정산표를 만든 뒤, 송금 완료된 항목을 잔액에 반영
-  var originalDebts=makeDebts(baseBal);
-  var completedDebts=[];
-  var bal={};
-  MEMBERS.forEach(function(m){bal[m]=baseBal[m];});
-  originalDebts.forEach(function(d){
-    var key='transfer_'+d.from+'_'+d.to;
-    if(transfersData[key]){
-      completedDebts.push(d);
-      bal[d.from]+=d.amount;  // 낸 사람의 미납액 감소
-      bal[d.to]-=d.amount;    // 받을 사람의 받을 돈 감소
+  var completedMap={};
+  Object.entries(transfersData).forEach(function(entry){
+    var dbKey=entry[0], t=entry[1];
+    if(t && typeof t==='object' && t.expenseKey && t.from && t.to){
+      completedMap[transferId(t.expenseKey,t.from,t.to)]=dbKey;
     }
   });
 
-  // 완료분을 뺀 뒤 남은 송금 목록 재계산
-  var debts=makeDebts(bal);
+  var expenseRows=[];
+  var debts=[];
+  items.forEach(function(entry){
+    var expenseKey=entry[0], e=entry[1];
+    var amount=e.amount||0;
+    var payer=e.payer;
+    if(!amount || MEMBERS.indexOf(payer)<0)return;
+    var share=Math.round(amount/MEMBERS.length);
+    var rows=[];
+    MEMBERS.forEach(function(m){
+      if(m===payer || share<=0)return;
+      var id=transferId(expenseKey,m,payer);
+      var d={expenseKey:expenseKey, expenseTitle:e.title||'지출', payer:payer, from:m, to:payer, amount:share, doneKey:completedMap[id]||null};
+      rows.push(d);
+      debts.push(d);
+    });
+    expenseRows.push({key:expenseKey,title:e.title||'지출',cat:e.cat||'기타',payer:payer,amount:amount,share:share,rows:rows});
+  });
 
-  var settle='<div class="section-label" style="margin-top:18px">💰 개인별 정산 현황</div>';
+  var pendingDebts=debts.filter(function(d){return !d.doneKey;});
+  var completedDebts=debts.filter(function(d){return d.doneKey;});
+
+  var bal={};
+  MEMBERS.forEach(function(m){bal[m]=0;});
+  pendingDebts.forEach(function(d){
+    bal[d.from]-=d.amount;
+    bal[d.to]+=d.amount;
+  });
+
+  var pairTotals={};
+  pendingDebts.forEach(function(d){
+    var k=d.from+'__'+d.to;
+    if(!pairTotals[k])pairTotals[k]={from:d.from,to:d.to,amount:0,count:0};
+    pairTotals[k].amount+=d.amount;
+    pairTotals[k].count+=1;
+  });
+  var pairRows=Object.values(pairTotals).sort(function(a,b){
+    if(a.from!==b.from)return a.from.localeCompare(b.from,'ko');
+    return a.to.localeCompare(b.to,'ko');
+  });
+
+  var settle='<div class="section-label" style="margin-top:18px">💰 개인별 남은 정산</div>';
   settle+='<div class="card" style="padding:6px 16px;margin-bottom:12px">';
   MEMBERS.forEach(function(m){
-    var diff=bal[m];
+    var diff=Math.round(bal[m]);
     var color=diff>=0?'var(--green)':'var(--accent)';
     var status=diff>=0?'받을 돈':'내야 할 돈';
-    settle+='<div class="settle-row"><span style="font-weight:500">'+m+'</span>';
+    settle+='<div class="settle-row"><span style="font-weight:500">'+attr(m)+'</span>';
     settle+='<div><span style="font-size:11px;color:var(--muted);margin-right:10px">낸 돈 '+(paid[m]||0).toLocaleString()+'원</span>';
-    settle+='<span style="font-size:12px;color:'+color+';font-weight:500">'+status+' '+Math.abs(Math.round(diff)).toLocaleString()+'원</span></div></div>';
+    settle+='<span style="font-size:12px;color:'+color+';font-weight:500">'+status+' '+Math.abs(diff).toLocaleString()+'원</span></div></div>';
   });
   settle+='</div>';
-  settle+='<div class="section-label">📲 송금 목록</div>';
-  if(!debts.length && !completedDebts.length){
-    settle+='<div class="card" style="text-align:center;color:var(--green);padding:16px;font-size:13px">🎉 모든 정산이 완료되었어요!</div>';
+
+  settle+='<div class="section-label">🧾 지출별 N빵 내역</div>';
+  if(!expenseRows.length){
+    settle+='<div class="card" style="text-align:center;color:var(--muted);padding:16px;font-size:13px">아직 정산할 지출이 없어요.</div>';
   } else {
-    settle+='<div class="card" style="padding:6px 16px">';
-    completedDebts.forEach(function(d){
-      var key='transfer_'+d.from+'_'+d.to;
-      settle+='<div class="settle-row" style="opacity:.5">';
-      settle+='<div style="display:flex;align-items:center;gap:8px;flex:1">';
-      settle+='<span style="font-size:16px">✅</span>';
-      settle+='<div><div style="font-size:13px;font-weight:500">';
-      settle+='<span style="color:var(--accent)">'+d.from+'</span>';
-      settle+='<span style="color:var(--muted);margin:0 6px">→</span>';
-      settle+='<span style="color:var(--green)">'+d.to+'</span></div>';
-      settle+='<div style="font-size:12px;color:var(--muted);margin-top:1px">'+d.amount.toLocaleString()+'원 · 완료됨</div></div></div>';
-      settle+='<button data-action="toggle-transfer" data-key="'+attr(key)+'" style="font-size:11px;padding:4px 10px;background:var(--green-light);color:var(--green);border-color:var(--green)">완료 취소</button>';
+    expenseRows.forEach(function(ex){
+      settle+='<div class="card" style="padding:12px 16px;margin-bottom:12px">';
+      settle+='<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px">';
+      settle+='<div><div style="font-size:14px;font-weight:600">'+attr(ex.title)+' <span class="badge '+(catBadge[ex.cat]||'badge-gray')+'">'+attr(ex.cat)+'</span></div>';
+      settle+='<div style="font-size:12px;color:var(--muted);margin-top:2px">'+attr(ex.payer)+' 결제 · 총 '+ex.amount.toLocaleString()+'원 · 1인 '+ex.share.toLocaleString()+'원</div></div>';
+      var doneCnt=ex.rows.filter(function(r){return r.doneKey;}).length;
+      settle+='<div style="font-size:11px;color:var(--muted);white-space:nowrap">'+doneCnt+'/'+ex.rows.length+' 완료</div>';
+      settle+='</div>';
+      ex.rows.forEach(function(d){
+        settle+='<div class="settle-row" style="opacity:'+(d.doneKey?'.5':'1')+'">';
+        settle+='<div style="display:flex;align-items:center;gap:8px;flex:1">';
+        settle+='<span style="font-size:16px">'+(d.doneKey?'✅':'💸')+'</span>';
+        settle+='<div><div style="font-size:13px;font-weight:500"><span style="color:var(--accent)">'+attr(d.from)+'</span><span style="color:var(--muted);margin:0 6px">→</span><span style="color:var(--green)">'+attr(d.to)+'</span></div>';
+        settle+='<div style="font-size:12px;color:var(--muted);margin-top:1px">'+d.amount.toLocaleString()+'원'+(d.doneKey?' · 완료됨':'')+'</div></div></div>';
+        if(d.doneKey){
+          settle+='<button data-action="cancel-transfer" data-key="'+attr(d.doneKey)+'" style="font-size:11px;padding:4px 10px;background:var(--green-light);color:var(--green);border-color:var(--green)">완료 취소</button>';
+        } else {
+          settle+='<button data-action="complete-transfer" data-expense-key="'+attr(d.expenseKey)+'" data-title="'+attr(d.expenseTitle)+'" data-from="'+attr(d.from)+'" data-to="'+attr(d.to)+'" data-amount="'+d.amount+'" style="font-size:11px;padding:4px 10px">송금 완료</button>';
+        }
+        settle+='</div>';
+      });
       settle+='</div>';
     });
-    debts.forEach(function(d){
-      var key='transfer_'+d.from+'_'+d.to;
-      settle+='<div class="settle-row">';
-      settle+='<div style="display:flex;align-items:center;gap:8px;flex:1">';
-      settle+='<span style="font-size:16px">💸</span>';
-      settle+='<div><div style="font-size:13px;font-weight:500">';
-      settle+='<span style="color:var(--accent)">'+d.from+'</span>';
-      settle+='<span style="color:var(--muted);margin:0 6px">→</span>';
-      settle+='<span style="color:var(--green)">'+d.to+'</span></div>';
-      settle+='<div style="font-size:12px;color:var(--muted);margin-top:1px">'+d.amount.toLocaleString()+'원</div></div></div>';
-      settle+='<button data-action="toggle-transfer" data-key="'+attr(key)+'" style="font-size:11px;padding:4px 10px">송금 완료</button>';
-      settle+='</div>';
-    });
-    settle+='</div>';
-    if(!debts.length){
-      settle+='<div class="card" style="text-align:center;color:var(--green);padding:16px;font-size:13px">🎉 모든 정산이 완료되었어요!</div>';
-    }
   }
+
+  settle+='<div class="section-label">📲 최종 송금 총합표</div>';
+  if(!pairRows.length){
+    settle+='<div class="card" style="text-align:center;color:var(--green);padding:16px;font-size:13px">🎉 남은 송금이 없어요!</div>';
+  } else {
+    settle+='<div class="card" style="padding:0;overflow:hidden">';
+    settle+='<table style="width:100%;border-collapse:collapse;font-size:13px">';
+    settle+='<thead><tr style="background:var(--bg);color:var(--muted)"><th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)">보낼 사람</th><th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)">받을 사람</th><th style="text-align:right;padding:10px 12px;border-bottom:1px solid var(--border)">남은 금액</th><th style="text-align:right;padding:10px 12px;border-bottom:1px solid var(--border)">건수</th></tr></thead><tbody>';
+    pairRows.forEach(function(r){
+      settle+='<tr><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--accent);font-weight:500">'+attr(r.from)+'</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--green);font-weight:500">'+attr(r.to)+'</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:600">'+r.amount.toLocaleString()+'원</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right;color:var(--muted)">'+r.count+'건</td></tr>';
+    });
+    settle+='</tbody></table></div>';
+    settle+='<div style="font-size:11px;color:var(--muted);margin:8px 4px 0">※ 위 표는 아직 송금 완료하지 않은 지출별 N빵 금액만 합산한 최종 송금표예요.</div>';
+  }
+
   document.getElementById('settle-section').innerHTML=settle;
 }
-
 window.addExpense=function(){
   var title=document.getElementById('exp-title').value.trim();
   var amount=parseInt(document.getElementById('exp-amount').value);
@@ -547,9 +574,16 @@ window.addExpense=function(){
   toast('지출이 추가되었어요!');
 };
 window.deleteExpense=function(key){remove(ref(db,'expenses/'+key));toast('삭제되었어요.');};
-window.toggleTransfer=function(key){
-  if(transfersData[key]){remove(ref(db,'transfers/'+key));toast('송금 완료 취소했어요.');}
-  else{set(ref(db,'transfers/'+key),true);toast('송금 완료! 🎉');}
+window.completeTransfer=function(expenseKey,title,from,to,amount){
+  amount=parseInt(amount);
+  if(!expenseKey||!from||!to||!amount)return;
+  var safeKey=(expenseKey+'__'+from+'__'+to).replace(/[.#$/\[\]]/g,'_');
+  set(ref(db,'transfers/'+safeKey),{expenseKey:expenseKey,title:title||'지출',from:from,to:to,amount:amount,doneAt:Date.now()});
+  toast('송금 완료! 🎉');
+};
+window.cancelTransfer=function(key){
+  remove(ref(db,'transfers/'+key));
+  toast('송금 완료 취소했어요.');
 };
 
 // CHECKLIST
@@ -646,7 +680,8 @@ document.addEventListener('click', function(e){
   if(action==='toggle-adopt'){window.toggleAdopt(key,current);return;}
   if(action==='delete-sug'){window.deleteSug(key);return;}
   if(action==='delete-expense'){window.deleteExpense(key);return;}
-  if(action==='toggle-transfer'){window.toggleTransfer(key);return;}
+  if(action==='complete-transfer'){window.completeTransfer(el.dataset.expenseKey, el.dataset.title, el.dataset.from, el.dataset.to, el.dataset.amount);return;}
+  if(action==='cancel-transfer'){window.cancelTransfer(key);return;}
   if(action==='toggle-check'){window.toggleCheck(key,current);return;}
   if(action==='delete-check'){window.deleteCheck(key);return;}
   if(action==='delete-place'){window.deletePlace(key);return;}
