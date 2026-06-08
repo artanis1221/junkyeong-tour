@@ -366,8 +366,8 @@ function renderSchedule(){
       html+='<span class="badge '+(s.adopted?'badge-green':'badge-amber')+'">'+(s.adopted?'채택됨':'검토 중')+'</span>';
       html+='<span style="font-size:11px;color:var(--hint)">by '+s.name+'</span>';
       if(isAdmin){
-        html+='<button onclick="toggleAdopt(''+key+'','+s.adopted+')" style="font-size:11px;padding:2px 8px">'+(s.adopted?'채택 취소':'채택')+'</button>';
-        html+='<button class="danger-btn" onclick="deleteSug(''+key+'')">🗑</button>';
+        html+='<button onclick="toggleAdopt(\''+key+'\','+s.adopted+')" style="font-size:11px;padding:2px 8px">'+(s.adopted?'채택 취소':'채택')+'</button>';
+        html+='<button class="danger-btn" onclick="deleteSug(\''+key+'\')">🗑</button>';
       }
       html+='</div></div>';
     });
@@ -383,8 +383,8 @@ function renderSchedule(){
       if(s.desc)html+='<div style="font-size:12px;color:var(--amber);margin-top:2px">'+s.desc+'</div>';
       html+='<div style="font-size:11px;color:var(--muted);margin-top:4px">by '+s.name+'</div></div>';
       html+='<div style="display:flex;gap:6px">';
-      html+='<button class="primary" onclick="toggleAdopt(''+key+'',false)" style="font-size:12px;padding:4px 10px">채택</button>';
-      html+='<button class="danger-btn" onclick="deleteSug(''+key+'')">🗑</button>';
+      html+='<button class="primary" onclick="toggleAdopt(\''+key+'\',false)" style="font-size:12px;padding:4px 10px">채택</button>';
+      html+='<button class="danger-btn" onclick="deleteSug(\''+key+'\')">🗑</button>';
       html+='</div></div>';
     });
     html+='</div>';
@@ -441,7 +441,7 @@ function renderExpense(){
       listHtml+='<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">';
       listHtml+='<div style="text-align:right"><div style="font-size:14px;font-weight:500">'+(e.amount||0).toLocaleString()+'원</div>';
       listHtml+='<div style="font-size:11px;color:var(--hint)">'+e.payer+'</div></div>';
-      listHtml+='<button class="danger-btn" onclick="deleteExpense(''+key+'')">🗑</button>';
+      listHtml+='<button class="danger-btn" onclick="deleteExpense(\''+key+'\')">🗑</button>';
       listHtml+='</div></div>';
     });
     listHtml+='</div>';
@@ -491,7 +491,7 @@ function renderExpense(){
       settle+='<span style="color:var(--green)">'+d.to+'</span></div>';
       settle+='<div style="font-size:12px;color:var(--muted);margin-top:1px">'+d.amount.toLocaleString()+'원</div></div></div>';
       var btnStyle=done?'background:var(--green-light);color:var(--green);border-color:var(--green)':'';
-      settle+='<button onclick="toggleTransfer(''+key+'')" style="font-size:11px;padding:4px 10px;'+btnStyle+'">'+(done?'완료 취소':'송금 완료')+'</button>';
+      settle+='<button onclick="toggleTransfer(\''+key+'\')" style="font-size:11px;padding:4px 10px;'+btnStyle+'">'+(done?'완료 취소':'송금 완료')+'</button>';
       settle+='</div>';
     });
     settle+='</div>';
@@ -535,10 +535,10 @@ function renderChecklist(data){
     html+='<div class="card" style="padding:4px 14px">';
     ci.forEach(function(entry){
       var key=entry[0], c=entry[1];
-      html+='<div class="check-item'+(c.done?' done':'')+'" onclick="toggleCheck(''+key+'','+c.done+')">';
-      html+='<input type="checkbox"'+(c.done?' checked':'')+' onclick="event.stopPropagation();toggleCheck(''+key+'','+c.done+')" style="width:15px;height:15px"/>';
+      html+='<div class="check-item'+(c.done?' done':'')+'" onclick="toggleCheck(\''+key+'\','+c.done+')">';
+      html+='<input type="checkbox"'+(c.done?' checked':'')+' onclick="event.stopPropagation();toggleCheck(\''+key+'\','+c.done+')" style="width:15px;height:15px"/>';
       html+='<span class="check-text" style="flex:1">'+c.text+'</span>';
-      html+='<button onclick="event.stopPropagation();deleteCheck(''+key+'')" class="danger-btn">🗑</button>';
+      html+='<button onclick="event.stopPropagation();deleteCheck(\''+key+'\')" class="danger-btn">🗑</button>';
       html+='</div>';
     });
     html+='</div></div>';
@@ -577,7 +577,7 @@ function renderPlaces(data){
       html+='</div>';
       html+='<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">';
       html+='<a href="https://www.google.com/maps/search/'+q+'" target="_blank" class="map-link">🗺 지도</a>';
-      html+='<button class="danger-btn" onclick="deletePlace(''+key+'')">🗑</button>';
+      html+='<button class="danger-btn" onclick="deletePlace(\''+key+'\')">🗑</button>';
       html+='</div></div>';
     });
     html+='</div></div>';
